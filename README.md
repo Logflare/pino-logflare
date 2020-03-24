@@ -1,6 +1,6 @@
 # pino-logflare
 
-This module provides a "transport" for [pino][pino] that forwards messages to a [Logflare][logflare].
+This module provides a "transport" for [pino][pino] that forwards messages to a [Logflare][logflare] account.
 
 ## Installation
 
