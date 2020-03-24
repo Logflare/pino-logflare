@@ -13,7 +13,7 @@ Alternatively, if you install it locally you can safely use it within `package.j
 Given an application `index.js` that logs via pino, you would use `pino-logflare` like so:
 
 ```bash
-$ node index.js | pino-logflare --key blablabla
+$ node index.js | pino-logflare --key blablabla --source blahblabla
 ```
 
 ## Usage
