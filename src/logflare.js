@@ -1,7 +1,9 @@
-'use strict'
+"use strict"
 
-const axios = require('axios').default
-const stream = require('stream')
+const axios = require("axios").default
+const stream = require("stream")
+const defaultApiUrl = `https://api.logflare.app/logs`
+
 
 class Client {
   constructor(options = {}) {
@@ -14,19 +16,19 @@ class Client {
       return
     }
     try {
-      const url = `https://api.logflare.app/logs/`
+      const url = this._options.apiUrl || defaultApiUrl
       const headers = {
-        'Content-Type': 'application/json',
-        'X-API-KEY': this._options.apiKey,
+        "Content-Type": "application/json",
+        "X-API-KEY": this._options.apiKey,
       }
       const data = {
         source: this._options.source,
-        log_entry: logs,
+        batch: logs,
       }
-      const result = await axios.post(url, data, { headers })
+      const result = await axios.post(url, data, {headers})
       return result
     } catch (err) {
-      console.error('The previous log(s) were not saved')
+      console.error("The previous log(s) were not saved")
       console.error(`${err.message}\n${err.stack}`)
     }
   }
@@ -49,4 +51,4 @@ class Client {
   }
 }
 
-module.exports = { Client }
+module.exports = {Client}

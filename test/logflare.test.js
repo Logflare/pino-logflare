@@ -30,8 +30,8 @@ test('inserts single document', (t) => {
   const client = new tested.Client()
   const stubPost = sinon.stub(axios, 'post').resolvesArg(1)
   client.insert({ message: 'hello world' }).then((data) => {
-    t.equals(data.log_entry.length, 1)
-    t.equals(data.log_entry[0].message, 'hello world')
+    t.equals(data.batch.length, 1)
+    t.equals(data.batch[0].message, 'hello world')
     stubPost.restore()
     t.end()
   })
@@ -47,10 +47,10 @@ test('inserts multiple documents', (t) => {
       { message: 'test 3' }
     ])
     .then((data) => {
-      t.equals(data.log_entry.length, 3)
-      t.equals(data.log_entry[0].message, 'test 1')
-      t.equals(data.log_entry[1].message, 'test 2')
-      t.equals(data.log_entry[2].message, 'test 3')
+      t.equals(data.batch.length, 3)
+      t.equals(data.batch[0].message, 'test 1')
+      t.equals(data.batch[1].message, 'test 2')
+      t.equals(data.batch[2].message, 'test 3')
       stubPost.restore()
       t.end()
     })
@@ -80,7 +80,7 @@ test('inserts sends com url, api key, and source', async (t) => {
   t.ok(
     stubPost.calledWithMatch(
       'https://api.logflare.app/logs',
-      { source: '1234-5678-91011-1234', log_entry: items },
+      { source: '1234-5678-91011-1234', batch: items },
       {
         headers: {
           'X-API-KEY': '1234567890'

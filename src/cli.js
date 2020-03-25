@@ -11,11 +11,13 @@ function main() {
     .version(pkg.version)
     .option('-k, --key <key>', 'Logflare API Key')
     .option('-s, --source <source>', 'Default source for the logs')
+    .option('-u, --url <url>', 'Logflare API URL (optional)')
     .action(async (options) => {
       try {
         const config = {
           apiKey: options.key || process.env.LOGFLARE_API_KEY,
           source: options.source || process.env.LOGFLARE_SOURCE,
+          apiUrl: options.url || process.env.LOGFLARE_URL,
         }
         const writeStream = await pinoLogflare.createWriteStream(config)
         process.stdin.pipe(writeStream)
