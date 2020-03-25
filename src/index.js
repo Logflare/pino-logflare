@@ -1,15 +1,11 @@
-'use strict'
+"use strict"
 
-const logflare = require('./logflare')
-const streams = require('./streams')
-const pumpify = require('pumpify')
+const logflare = require("./logflare")
+const streams = require("./streams")
+const pumpify = require("pumpify")
 
-async function createWriteStream(options = {}) {
-  return createWriteStreamSync(options)
-}
-
-function createWriteStreamSync(options = {}) {
-  const { size = 1 } = options
+function createWriteStream(options = {}) {
+  const {size = 1} = options
 
   const parseJsonStream = streams.parseJsonStream()
   const toLogEntryStream = streams.toLogEntryStream()
@@ -18,7 +14,7 @@ function createWriteStreamSync(options = {}) {
   const client = new logflare.Client(options)
   const writeStream = client.insertStream()
 
-  return new pumpify(
+  return pumpify(
     parseJsonStream,
     toLogEntryStream,
     batchStream,
@@ -27,4 +23,3 @@ function createWriteStreamSync(options = {}) {
 }
 
 module.exports.createWriteStream = createWriteStream
-module.exports.createWriteStreamSync = createWriteStreamSync

@@ -5,34 +5,30 @@ The library exposes a function to write directly to Logflare from your own appli
 Example:
 
 ```js
+const pino = require("pino");
 const logflare = require("pino-logflare");
-const pinoms = require("pino-multi-stream");
-// create the logflare destination stream
-const writeStream = await logflare.createWriteStream();
+
+// create pino-logflare stream
+const stream = logflare.createWriteStream({
+  apiKey: "YOUR_KEY",
+  source: "YOUR_SOURCE",
+  size: 1
+});
+
 // create pino loggger
-const logger = pinoms({ streams: [writeStream] });
+const logger = pino({}, stream);
+
 // log some events
 logger.info("Informational message");
 logger.error(new Error("things got bad"), "error message");
+
+const child = logger.child({ property: "value" });
+child.info("hello child!");
 ```
 
 ## Functions
 
 ### createWriteStream
-
-The `createWriteStream` function creates a writestream that `pino-multi-stream` can use to send logs to. \*_This function is async because of compatibility reasons_
-
-Example:
-
-```js
-const writeStream = await logflare.createWriteStream({
-  apiKey: "blablabla",
-  source: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
-  size: 10
-});
-```
-
-### createWriteStreamSync
 
 The `createWriteStreamSync` function creates a writestream that `pino-multi-stream` can use to send logs to.
 
@@ -40,7 +36,7 @@ Example:
 
 ```js
 const writeStream = logflare.createWriteStreamSync({
-  apiKey: "blablabla",
+  apiKey: "API_KEY",
   source: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
   size: 10
 });

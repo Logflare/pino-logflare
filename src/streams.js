@@ -42,8 +42,10 @@ function toLogEntry(item) {
   const service = item.service || ""
   const pid = item.pid
   const v = item.v
+  const stack = item.stack || ""
+  const type = item.type || ""
 
-  const cleanedItem = _.omit(item, ["time", "level", "msg", "hostname", "service", "pid", "v"])
+  const cleanedItem = _.omit(item, ["time", "level", "msg", "hostname", "service", "pid", "v", "stack", "type"])
   return {
     metadata: {
       ...cleanedItem,
@@ -51,7 +53,9 @@ function toLogEntry(item) {
         host,
         service,
         pid,
-        v
+        v,
+        stack,
+        type
       },
       level: status,
     },

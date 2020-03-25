@@ -28,6 +28,8 @@ See the [API](./docs/API.md) documentation for details.
 
 ## Credits
 
+Thanks to [@zackkrida](https://github.com/zackkrida) for creating the initial version of pino-logflare.
+
 Thanks to [@ovhemert](https://github.com/ovhemert) for creating the [pino-datadog](https://github.com/ovhemert/pino-datadog) project this transport is based on.
 
 ## Contributing

@@ -19,7 +19,7 @@ function main() {
           source: options.source || process.env.LOGFLARE_SOURCE,
           apiUrl: options.url || process.env.LOGFLARE_URL,
         }
-        const writeStream = await pinoLogflare.createWriteStream(config)
+        const writeStream = pinoLogflare.createWriteStream(config)
         process.stdin.pipe(writeStream)
         process.stdin.pipe(process.stdout)
       } catch (error) {

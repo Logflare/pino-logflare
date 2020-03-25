@@ -5,7 +5,7 @@ const tested = require('../src/index')
 
 test('creates write stream', (t) => {
   try {
-    const writeStream = tested.createWriteStreamSync()
+    const writeStream = tested.createWriteStream()
     t.ok(writeStream.writable)
     t.end()
   } catch (err) {
@@ -14,15 +14,3 @@ test('creates write stream', (t) => {
   }
 })
 
-test('creates write stream "async"', (t) => {
-  tested
-    .createWriteStream()
-    .then((writeStream) => {
-      t.ok(writeStream.writable)
-      t.end()
-    })
-    .catch((err) => {
-      t.fail(err.message)
-      t.end()
-    })
-})

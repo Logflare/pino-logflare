@@ -1,8 +1,8 @@
 {
   "name": "pino-logflare",
-  "version": "1.1.2",
+  "version": "0.1.0",
   "description": "A transport for pino that sends messages to Logflare",
-  "homepage": "https://github.com/ovhemert/pino-logflare",
+  "homepage": "https://github.com/logflare/pino-logflare",
   "main": "src/index.js",
   "scripts": {
     "dev:cli": "node ./test/debug.js | node ./src/cli.js",
