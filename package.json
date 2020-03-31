@@ -23,7 +23,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zackkrida/pino-logflare.git"
+    "url": "git+https://github.com/logflare/pino-logflare.git"
   },
   "engines": {
     "node": ">=8.9.0"
@@ -52,5 +52,12 @@
     "singleQuote": true,
     "semi": false,
     "arrowParens": "always"
+  },
+  "bugs": {
+    "url": "https://github.com/logflare/pino-logflare/issues"
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "test"
   }
 }
