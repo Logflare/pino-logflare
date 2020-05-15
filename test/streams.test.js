@@ -12,7 +12,7 @@ test('streams to batches', (t) => {
     }
   })
   for (let i = 1; i <= 20; i++) {
-    writeStream.write({ id: i, name: `item ${i}` })
+    writeStream.write({id: i, name: `item ${i}`})
   }
   writeStream.end()
 })
@@ -20,7 +20,7 @@ test('streams to batches', (t) => {
 test('streams valid json', (t) => {
   const writeStream = tested.parseJsonStream()
   writeStream.on('data', (chunk) => {
-    t.deepEqual(chunk, { id: '1', name: 'item 1' })
+    t.deepEqual(chunk, {id: '1', name: 'item 1'})
     t.end()
   })
   writeStream.write('{ "id": "1", "name": "item 1" }')
@@ -99,7 +99,7 @@ test('transforms pino log messages', (t) => {
       pid: 9118,
       source: 'test',
       service: 'myservice',
-      tags: { foo: 'bar' },
+      tags: {foo: 'bar'},
       v: 1,
     },
   ]

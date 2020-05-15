@@ -1,6 +1,6 @@
 "use strict"
 
-const logflare = require("./logflare")
+const {LogflareHttpClient} = require("logflare-transport-core")
 const streams = require("./streams")
 const pumpify = require("pumpify")
 
@@ -11,8 +11,7 @@ function createWriteStream(options = {}) {
   const toLogEntryStream = streams.toLogEntryStream()
   const batchStream = streams.batchStream(size)
 
-  const client = new logflare.Client(options)
-  const writeStream = client.insertStream()
+  const writeStream = new LogflareHttpClient(options).insertStream()
 
   return pumpify(
     parseJsonStream,
