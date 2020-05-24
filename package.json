@@ -1,6 +1,6 @@
 {
   "name": "pino-logflare",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A transport for pino that sends messages to Logflare",
   "homepage": "https://github.com/logflare/pino-logflare",
   "main": "src/index.js",
@@ -43,7 +43,7 @@
     "commander": "^5.0.0",
     "fast-json-parse": "^1.0.3",
     "lodash": "^4.17.15",
-    "logflare-transport-core": "../logflare-transport-core-js/",
+    "logflare-transport-core": "^0.1.0",
     "pumpify": "^2.0.1",
     "split2": "^3.1.1",
     "stream": "0.0.2",

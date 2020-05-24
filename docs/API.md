@@ -11,8 +11,9 @@ const logflare = require("pino-logflare");
 // create pino-logflare stream
 const stream = logflare.createWriteStream({
   apiKey: "YOUR_KEY",
-  source: "YOUR_SOURCE",
-  size: 1
+  sourceToken: "YOUR_SOURCE",
+  apiBaseUrl: "YOUR_API_BASE_URL", // optional
+  batchMaxSize: 1 // optional
 });
 
 // create pino loggger
@@ -37,8 +38,8 @@ Example:
 ```js
 const writeStream = logflare.createWriteStreamSync({
   apiKey: "API_KEY",
-  source: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
-  size: 10
+  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
+  batchMaxSize: 1
 });
 ```
 

@@ -35,7 +35,7 @@ You can pass the following options via cli arguments or use the environment vari
 | ------------- | ----------------------- | -------------------- | -------------------------------------------------------------------- |
 | -V            | --version               |                      | Output the version number                                            |
 | -k            | --key &lt;apikey&gt;    | LOGFLARE_API_KEY     | The API key that can be found in your Logflare account               |
-| -s            | --source &lt;source&gt; | LOGFLARE_SOURCE      | Default source for the logs                                          |
+| -s            | --source &lt;source&gt; | LOGFLARE_SOURCE_TOKEN| Default source for the logs                                          |
 | -h            | --help                  |                      | Output usage information                                             |
 
 See the [API](./API.md) documentation for details.

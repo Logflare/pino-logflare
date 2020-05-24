@@ -16,8 +16,8 @@ function main() {
       try {
         const config = {
           apiKey: options.key || process.env.LOGFLARE_API_KEY,
-          source: options.source || process.env.LOGFLARE_SOURCE,
-          apiUrl: options.url || process.env.LOGFLARE_URL,
+          sourceToken: options.source || process.env.LOGFLARE_SOURCE_TOKEN,
+          apiBaseUrl: options.url || process.env.LOGFLARE_URL,
         }
         const writeStream = pinoLogflare.createWriteStream(config)
         process.stdin.pipe(writeStream)
