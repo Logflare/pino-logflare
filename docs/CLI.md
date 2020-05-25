@@ -24,7 +24,7 @@ child.info("hello child!");
 
 
 ```bash
-$ node index.js | pino-logflare --key YOUR_KEY --source YOUR_SOURCE
+$ node index.js | pino-logflare --key YOUR_KEY --source YOUR_SOURCE_ID
 ```
 
 ## Usage
