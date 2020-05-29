@@ -43,7 +43,7 @@
     "commander": "^5.0.0",
     "fast-json-parse": "^1.0.3",
     "lodash": "^4.17.15",
-    "logflare-transport-core": "^0.1.0",
+    "logflare-transport-core": "^0.1.2",
     "pumpify": "^2.0.1",
     "split2": "^3.1.1",
     "stream": "0.0.2",
