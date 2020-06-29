@@ -12,7 +12,7 @@ function main() {
     .option('-k, --key <key>', 'Logflare API Key')
     .option('-s, --source <source>', 'Default source for the logs')
     .option('-u, --url <url>', 'Logflare API URL (optional)')
-    .action(async (options) => {
+    .action(async (options:object) => {
       try {
         const config = {
           apiKey: options.key || process.env.LOGFLARE_API_KEY,

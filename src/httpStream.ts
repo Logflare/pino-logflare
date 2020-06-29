@@ -1,10 +1,8 @@
-"use strict"
-
-const {LogflareHttpClient} = require("logflare-transport-core")
-const streams = require("./streams")
+import {LogflareHttpClient} from "logflare-transport-core"
+import * as streams from "./streams"
 const pumpify = require("pumpify")
 
-function createWriteStream(options = {}) {
+function createWriteStream(options: object = {}) {
   const {size = 1} = options
 
   const parseJsonStream = streams.parseJsonStream()
@@ -21,4 +19,4 @@ function createWriteStream(options = {}) {
   )
 }
 
-module.exports.createWriteStream = createWriteStream
+export default createWriteStream
