@@ -1,6 +1,6 @@
 {
   "name": "pino-logflare",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A transport for Pino that sends messages to Logflare",
   "homepage": "https://github.com/logflare/pino-logflare",
   "main": "dist/index.js",
