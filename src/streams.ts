@@ -3,7 +3,6 @@ import batch2 from "batch2"
 import split2 from "split2"
 import through2 from "through2"
 import fastJsonParse from "fast-json-parse"
-import _ from "lodash"
 
 function batchStream(size: number) {
   return batch2.obj({size})
@@ -27,5 +26,5 @@ function toLogEntryStream() {
 export {
   batchStream,
   parseJsonStream,
-  toLogEntryStream
+  toLogEntryStream,
 }

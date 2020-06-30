@@ -23,7 +23,6 @@ var logflare_transport_core_1 = require("logflare-transport-core");
 var streams = __importStar(require("./streams"));
 var pumpify = require("pumpify");
 function createWriteStream(options) {
-    if (options === void 0) { options = {}; }
     var _a = options.size, size = _a === void 0 ? 1 : _a;
     var parseJsonStream = streams.parseJsonStream();
     var toLogEntryStream = streams.toLogEntryStream();

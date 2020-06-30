@@ -1,4 +1,5 @@
 /// <reference types="node" />
 import stream from "stream";
-declare const createConsoleWriteStream: (options: object) => stream.Writable;
+import { LogflareUserOptionsI } from "logflare-transport-core";
+declare const createConsoleWriteStream: (options: LogflareUserOptionsI) => stream.Writable;
 export default createConsoleWriteStream;
