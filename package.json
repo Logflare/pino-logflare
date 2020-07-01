@@ -7,9 +7,7 @@
   "scripts": {
     "prepublish": "tsc",
     "dev:cli": "node ./test/debug.js | node ./src/cli.js",
-    "test": "tap test/*.test.js --coverage --100",
-    "test:report": "tap test/*.test.js --coverage  --coverage-report=html --100",
-    "posttest": "tap --coverage --coverage-report=lcovonly",
+    "test": "jest",
     "test.watch": "jest --watch"
   },
   "bin": {
@@ -35,9 +33,10 @@
     "test"
   ],
   "devDependencies": {
-    "@types/lodash": "^4.14.157",
+    "@babel/core": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
     "@babel/preset-typescript": "^7.10.1",
+    "@types/lodash": "^4.14.157",
     "@types/node": "^14.0.14",
     "@types/pumpify": "^1.4.1",
     "@types/split2": "^2.1.6",
@@ -48,7 +47,8 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
-    "sinon": "^9.0.1"
+    "sinon": "^9.0.1",
+    "typescript": "^3.9.5"
   },
   "dependencies": {
     "axios": "^0.19.2",

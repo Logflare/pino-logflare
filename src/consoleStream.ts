@@ -2,8 +2,9 @@ import {toLogEntry} from "./utils"
 import _ from "lodash"
 import stream from "stream"
 import fastJsonParse from "fast-json-parse"
+import {LogflareUserOptionsI} from "logflare-transport-core"
 
-const createConsoleWriteStream = (options: object) => {
+const createConsoleWriteStream = (options: LogflareUserOptionsI) => {
   const writeStream = new stream.Writable({
     objectMode: true,
     highWaterMark: 1,

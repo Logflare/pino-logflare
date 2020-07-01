@@ -1,15 +1,18 @@
 import createHttpWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
-import {pinoBrowserLogEventI, formatPinoBrowserLogEvent} from "./utils"
+import {pinoBrowserLogEventI, formatPinoBrowserLogEvent, toLogEntry} from "./utils"
+import {doTypecasting, LogflareUserOptionsI} from "logflare-transport-core"
+import stream from "stream"
+import _ from "lodash"
 
 const isBrowser = typeof window !== 'undefined'
   && typeof window.document !== 'undefined'
 
 const isNode = typeof process !== 'undefined'
   && process.versions != null
-  && process.versions.node != null;
+  && process.versions.node != null
 
-function createWriteStreamVercelAlt(options: object) {
+function createWriteStreamVercelAlt(options: LogflareUserOptionsI) {
   if (isNode) {
     return createConsoleWriteStream(options)
   }
@@ -19,7 +22,7 @@ function createWriteStreamVercelAlt(options: object) {
   throw("Something went wrong: environment should be either browser or node")
 }
 
-const createPinoBrowserSend = (options: object) => {
+const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
   const {apiKey, sourceToken} = options
 
   const postRequest = async (lfRequestBody: object) => {
@@ -43,7 +46,8 @@ const createPinoBrowserSend = (options: object) => {
   }
 }
 
-const logflarePinoVercel = (options: object) => {
+
+const logflarePinoVercel = (options: LogflareUserOptionsI) => {
   return {
     stream: createConsoleWriteStream(options),
     send: createPinoBrowserSend(options),
