@@ -5,7 +5,6 @@
   "homepage": "https://github.com/logflare/pino-logflare",
   "main": "dist/index.js",
   "scripts": {
-    "prepublish": "tsc",
     "dev:cli": "node ./test/debug.js | node ./src/cli.js",
     "test": "jest",
     "test.watch": "jest --watch"
