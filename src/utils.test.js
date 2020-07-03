@@ -19,7 +19,7 @@ describe("utils", () => {
           child2: 'value2',
           child3: 'value3'
         },
-        log_entry: 'a message from pino logger',
+        log_entry: 'browser | a message from pino logger',
         timestamp: 1593372837388
       }
     )

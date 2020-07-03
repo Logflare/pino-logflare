@@ -35,7 +35,7 @@ var formatPinoBrowserLogEvent = function (logEvent) {
     var ts = logEvent.ts, messages = logEvent.messages, bindings = logEvent.bindings, levelValue = logEvent.level.value;
     var level = levelToStatus(levelValue);
     var timestamp = ts;
-    var logEntry = messages.join(" ");
+    var logEntry = "browser | " + messages.join(" ");
     var defaultMetadata = {
         url: window.document.URL,
         level: level

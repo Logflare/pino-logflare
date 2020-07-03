@@ -1,7 +1,7 @@
 import createHttpWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
 import {pinoBrowserLogEventI, formatPinoBrowserLogEvent, toLogEntry} from "./utils"
-import {doTypecasting, LogflareUserOptionsI} from "logflare-transport-core"
+import {doTypecasting, LogflareHttpClient, LogflareUserOptionsI} from "logflare-transport-core"
 import stream from "stream"
 import _ from "lodash"
 
@@ -23,29 +23,13 @@ function createWriteStreamVercelAlt(options: LogflareUserOptionsI) {
 }
 
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
-  const {apiKey, sourceToken} = options
-
-  const postRequest = async (lfRequestBody: object) => {
-    const logflareApiURL = `https://api.logflare.app/logs?api_key=${apiKey}&source=${sourceToken}`
-
-    const body = JSON.stringify(lfRequestBody)
-    const request = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    }
-
-    await fetch(logflareApiURL, request)
-  }
+  const client = new LogflareHttpClient(options)
 
   return (level: number, logEvent: pinoBrowserLogEventI) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
-    postRequest(logflareLogEvent)
+    client.postLogEvents([logflareLogEvent])
   }
 }
-
 
 const logflarePinoVercel = (options: LogflareUserOptionsI) => {
   return {

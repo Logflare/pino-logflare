@@ -27,7 +27,7 @@ const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
   const {ts, messages, bindings, level: {value: levelValue}} = logEvent
   const level = levelToStatus(levelValue)
   const timestamp = ts
-  const logEntry = messages.join(" ")
+  const logEntry = "browser | " + messages.join(" ")
   const defaultMetadata = {
     url: window.document.URL,
     level: level
