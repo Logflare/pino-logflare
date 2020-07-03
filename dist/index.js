@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15,17 +26,8 @@ var isBrowser = typeof window !== 'undefined'
 var isNode = typeof process !== 'undefined'
     && process.versions != null
     && process.versions.node != null;
-function createWriteStreamVercelAlt(options) {
-    if (isNode) {
-        return consoleStream_1.default(options);
-    }
-    if (isBrowser) {
-        return httpStream_1.default(options);
-    }
-    throw ("Something went wrong: environment should be either browser or node");
-}
 var createPinoBrowserSend = function (options) {
-    var client = new logflare_transport_core_1.LogflareHttpClient(options);
+    var client = new logflare_transport_core_1.LogflareHttpClient(__assign(__assign({}, options), { fromBrowser: true }));
     return function (level, logEvent) {
         var logflareLogEvent = utils_1.formatPinoBrowserLogEvent(logEvent);
         client.postLogEvents([logflareLogEvent]);

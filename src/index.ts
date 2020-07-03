@@ -12,18 +12,8 @@ const isNode = typeof process !== 'undefined'
   && process.versions != null
   && process.versions.node != null
 
-function createWriteStreamVercelAlt(options: LogflareUserOptionsI) {
-  if (isNode) {
-    return createConsoleWriteStream(options)
-  }
-  if (isBrowser) {
-    return createHttpWriteStream(options)
-  }
-  throw("Something went wrong: environment should be either browser or node")
-}
-
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
-  const client = new LogflareHttpClient(options)
+  const client = new LogflareHttpClient({...options, fromBrowser: true})
 
   return (level: number, logEvent: pinoBrowserLogEventI) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
