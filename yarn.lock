@@ -1852,10 +1852,10 @@ lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
 
-logflare-transport-core@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.2.0.tgz#bc42830949b2918289268e54aad2140aa8828970"
-  integrity sha512-ovbLjYR8fHTInEBlV6pDuHMBeIgMxD2LIDK0PxrZGlyDO8vK8iJpyeWNPWI5PVJn5TTP19vUsR8soUQJkyFZnQ==
+logflare-transport-core@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.2.1.tgz#fe22eb7ae99c7f6c15cc3593a06b20151d067c9d"
+  integrity sha512-vgrMPqatF93Fxj+z7SpeS21zej5n65kZwvxAcSYiq7ZiC+azTnpivnSCZskUFEYsy6Bn/T6DQ4C12ytlHPrfHQ==
   dependencies:
     "@types/lodash" "^4.14.153"
     axios "^0.19.2"
