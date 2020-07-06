@@ -18,7 +18,7 @@ var createConsoleWriteStream = function (options) {
             .map(utils_1.toLogEntry)
             .map(JSON.stringify)
             .forEach(function (x) {
-            console.log(x);
+            console.log(" " + x);
         });
         callback();
     };

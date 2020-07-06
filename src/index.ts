@@ -2,8 +2,6 @@ import createHttpWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
 import {pinoBrowserLogEventI, formatPinoBrowserLogEvent, toLogEntry} from "./utils"
 import {doTypecasting, LogflareHttpClient, LogflareUserOptionsI} from "logflare-transport-core"
-import stream from "stream"
-import _ from "lodash"
 
 const isBrowser = typeof window !== 'undefined'
   && typeof window.document !== 'undefined'

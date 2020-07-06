@@ -17,7 +17,7 @@ const createConsoleWriteStream = (options: LogflareUserOptionsI) => {
       .map(toLogEntry)
       .map(JSON.stringify)
       .forEach((x) => {
-        console.log(x)
+        console.log(` ${x}`)
       })
 
     callback()
