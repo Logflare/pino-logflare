@@ -1,6 +1,9 @@
 # pino-logflare
 
-This module provides a "transport" for [pino][pino] that forwards messages to a [Logflare][logflare] account.
+This module provides transport for [pino][pino] that forwards messages to your [Logflare][logflare] account.
+
+You can use `pino-logflare` both for node and browser apps. We also support isomorphic Vercel apps.
+
 
 ## Installation
 
@@ -25,6 +28,11 @@ See the [CLI](./docs/CLI.md) documentation for details.
 
 Want to use `pino-logflare` as a library in your project?
 See the [API](./docs/API.md) documentation for details.
+
+## Vercel
+
+Set up `pino-logflare` to use in your Vercel project.
+See the [VERCEL](./docs/VERCEL.md) documentation for details.
 
 ## Credits
 
