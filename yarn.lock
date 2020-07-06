@@ -882,9 +882,9 @@
   integrity sha512-Ft5BNFmv2pHDgxV5JDsndOWTRJ+56zte0ZpYLowp03tW+K+t8u8YMOzAnpuqPgzX6WO1XpDIUm7u04M8vdDiVQ==
 
 "@types/node@*", "@types/node@^14.0.14":
-  version "14.0.14"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.14.tgz#24a0b5959f16ac141aeb0c5b3cd7a15b7c64cbce"
-  integrity sha512-syUgf67ZQpaJj01/tRTknkMNoBBLWJOBODF0Zm4NrXmiSuxjymFrxnTu1QVYRubhVkRcZLYZG8STTwJRdVm/WQ==
+  version "14.0.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.18.tgz#5111b2285659442f9f95697386a2b42b875bd7e9"
+  integrity sha512-0Z3nS5acM0cIV4JPzrj9g/GH0Et5vmADWtip3YOXOp1NpOLU8V3KoZDc8ny9c1pe/YSYYzQkAWob6dyV/EWg4g==
 
 "@types/pumpify@^1.4.1":
   version "1.4.1"
@@ -1852,10 +1852,10 @@ lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
 
-logflare-transport-core@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.2.1.tgz#fe22eb7ae99c7f6c15cc3593a06b20151d067c9d"
-  integrity sha512-vgrMPqatF93Fxj+z7SpeS21zej5n65kZwvxAcSYiq7ZiC+azTnpivnSCZskUFEYsy6Bn/T6DQ4C12ytlHPrfHQ==
+logflare-transport-core@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.2.3.tgz#fb50a97ae71e836ae7674d8cc7e3faa54e3d86a0"
+  integrity sha512-1oiJN2/Khc3Jodwx5u7zX+J5KG8L2rjnqI+90+FV67ozk+t/aV9ju3BBHSjJB8zmP2fHBBPrYTQuS1QiaRMOFg==
   dependencies:
     "@types/lodash" "^4.14.153"
     axios "^0.19.2"

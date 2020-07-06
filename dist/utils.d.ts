@@ -14,7 +14,7 @@ declare const formatPinoBrowserLogEvent: (logEvent: pinoBrowserLogEventI) => {
         level: string;
         browser: boolean;
     };
-    log_entry: string[];
+    log_entry: string;
     timestamp: number;
 };
 declare function toLogEntry(item: object): {
