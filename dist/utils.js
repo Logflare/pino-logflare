@@ -35,10 +35,11 @@ var formatPinoBrowserLogEvent = function (logEvent) {
     var ts = logEvent.ts, messages = logEvent.messages, bindings = logEvent.bindings, levelValue = logEvent.level.value;
     var level = levelToStatus(levelValue);
     var timestamp = ts;
-    var logEntry = "browser | " + messages.join(" ");
+    var logEntry = messages;
     var defaultMetadata = {
         url: window.document.URL,
-        level: level
+        level: level,
+        browser: true
     };
     var metadata = lodash_1.default.reduce(bindings, function (acc, el) {
         return Object.assign(acc, el);

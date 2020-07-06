@@ -24,13 +24,14 @@ interface pinoBrowserLogEventI {
 }
 
 const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
-  const {ts, messages, bindings, level: {value: levelValue}} = logEvent
+  const { ts, messages, bindings, level: { value: levelValue } } = logEvent
   const level = levelToStatus(levelValue)
   const timestamp = ts
-  const logEntry = "browser | " + messages.join(" ")
+  const logEntry = messages
   const defaultMetadata = {
     url: window.document.URL,
-    level: level
+    level: level,
+    browser: true
   }
   const metadata = _.reduce(bindings, (acc, el) => {
     return Object.assign(acc, el)
@@ -54,7 +55,7 @@ function toLogEntry(item: object) {
   const timestamp = item.time || new Date().getTime()
 
   const cleanedItem = _.omit(item, ["time", "level", "msg", "hostname", "service", "pid", "stack", "type"])
-  const context = _.pickBy({host, service, pid, stack, type}, x => x)
+  const context = _.pickBy({ host, service, pid, stack, type }, x => x)
   return {
     metadata: {
       ...cleanedItem,
@@ -66,4 +67,4 @@ function toLogEntry(item: object) {
   }
 }
 
-export {toLogEntry, formatPinoBrowserLogEvent, pinoBrowserLogEventI}
+export { toLogEntry, formatPinoBrowserLogEvent, pinoBrowserLogEventI }

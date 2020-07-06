@@ -12,8 +12,9 @@ declare const formatPinoBrowserLogEvent: (logEvent: pinoBrowserLogEventI) => {
     metadata: {
         url: string;
         level: string;
+        browser: boolean;
     };
-    log_entry: string;
+    log_entry: string[];
     timestamp: number;
 };
 declare function toLogEntry(item: object): {
