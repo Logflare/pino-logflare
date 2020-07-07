@@ -1,7 +1,7 @@
 import createHttpWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
-import {pinoBrowserLogEventI, formatPinoBrowserLogEvent, toLogEntry} from "./utils"
-import {doTypecasting, LogflareHttpClient, LogflareUserOptionsI} from "logflare-transport-core"
+import { pinoBrowserLogEventI, formatPinoBrowserLogEvent, toLogEntry } from "./utils"
+import { doTypecasting, LogflareHttpClient, LogflareUserOptionsI } from "logflare-transport-core"
 
 const isBrowser = typeof window !== 'undefined'
   && typeof window.document !== 'undefined'
@@ -11,7 +11,7 @@ const isNode = typeof process !== 'undefined'
   && process.versions.node != null
 
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
-  const client = new LogflareHttpClient({...options, fromBrowser: true})
+  const client = new LogflareHttpClient({ ...options, fromBrowser: true })
 
   return (level: number, logEvent: pinoBrowserLogEventI) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
@@ -28,4 +28,4 @@ const logflarePinoVercel = (options: LogflareUserOptionsI) => {
 
 const createWriteStream = createHttpWriteStream
 
-export {createWriteStream, logflarePinoVercel, createConsoleWriteStream, createHttpWriteStream}
+export { createWriteStream, logflarePinoVercel, createPinoBrowserSend, createConsoleWriteStream, createHttpWriteStream }

@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createHttpWriteStream = exports.createConsoleWriteStream = exports.logflarePinoVercel = exports.createWriteStream = void 0;
+exports.createHttpWriteStream = exports.createConsoleWriteStream = exports.createPinoBrowserSend = exports.logflarePinoVercel = exports.createWriteStream = void 0;
 var httpStream_1 = __importDefault(require("./httpStream"));
 exports.createHttpWriteStream = httpStream_1.default;
 var consoleStream_1 = __importDefault(require("./consoleStream"));
@@ -33,6 +33,7 @@ var createPinoBrowserSend = function (options) {
         client.postLogEvents([logflareLogEvent]);
     };
 };
+exports.createPinoBrowserSend = createPinoBrowserSend;
 var logflarePinoVercel = function (options) {
     return {
         stream: consoleStream_1.default(options),
