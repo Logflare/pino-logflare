@@ -46,10 +46,9 @@ The `createWriteStream` function creates a writestream.
 Example:
 
 ```js
-const writeStream = logflare.createWriteStream({
+const writeStream = createWriteStream({
   apiKey: "API_KEY",
-  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
-  batchMaxSize: 1
+  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx"
 });
 ```
 
@@ -67,7 +66,7 @@ Set the source ID to which the logs are sent.
 
 #### batchMaxSize
 
-Type: `String` _(optional)_
+Type: `Number` _(optional)_
 
 The number of log messages to send as a single batch (defaults to 1).
 
@@ -78,10 +77,9 @@ The `createPinoBrowserSend` function creates a writestream to send log events fr
 Example:
 
 ```js
-const send = logflare.createPinoBrowserSend({
+const send = createPinoBrowserSend({
   apiKey: "API_KEY",
-  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
-  batchMaxSize: 1
+  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx"
 });
 ```
 
@@ -99,6 +97,6 @@ Set the source ID to which the logs are sent.
 
 #### batchMaxSize
 
-Type: `String` _(optional)_
+Type: `Number` _(optional)_
 
 The number of log messages to send as a single batch (defaults to 1).
