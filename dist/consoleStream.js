@@ -18,8 +18,8 @@ var createConsoleWriteStream = function (options) {
             .map(utils_1.toLogEntry)
             .map(JSON.stringify)
             .forEach(function (x) {
-                process.stdout.write(x + '\n');
-            });
+            process.stdout.write(x + '\n');
+        });
         callback();
     };
     return writeStream;
