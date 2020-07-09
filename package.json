@@ -11,7 +11,7 @@
     "test.watch": "jest --watch"
   },
   "bin": {
-    "pino-logflare": "src/cli.js"
+    "pino-logflare": "dist/cli.js"
   },
   "keywords": [
     "pino",
