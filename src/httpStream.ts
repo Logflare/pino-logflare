@@ -3,7 +3,11 @@ import * as streams from "./streams"
 
 const pumpify = require("pumpify")
 
-function createWriteStream(options: LogflareUserOptionsI) {
+interface Options extends LogflareUserOptionsI {
+  size?: number;
+}
+
+function createWriteStream(options: Options) {
   const {size = 1} = options
 
   const parseJsonStream = streams.parseJsonStream()
