@@ -50,6 +50,9 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
+    "jest": "^26.1.0",
+    "jest-mock-process": "^1.4.0",
+    "pino-multi-stream": "^5.0.0",
     "sinon": "^9.0.1",
     "typescript": "^3.9.5"
   },
