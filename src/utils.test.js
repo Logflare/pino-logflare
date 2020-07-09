@@ -17,9 +17,10 @@ describe("utils", () => {
           level: 'info',
           child1: 'value1',
           child2: 'value2',
-          child3: 'value3'
+          child3: 'value3',
+          browser: true
         },
-        log_entry: 'browser | a message from pino logger',
+        log_entry: 'a message from pino logger',
         timestamp: 1593372837388
       }
     )
