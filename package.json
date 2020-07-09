@@ -13,6 +13,9 @@
   "bin": {
     "pino-logflare": "dist/cli.js"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "pino",
     "pino-transport",
