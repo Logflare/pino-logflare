@@ -44,7 +44,7 @@ const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
   }
 }
 
-function toLogEntry(item: object) {
+function toLogEntry(item: Record<string, any>) {
   const status = levelToStatus(item.level)
   const message = item.msg || status
   const host = item.hostname
