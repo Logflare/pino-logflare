@@ -1,4 +1,5 @@
 import _ from "lodash"
+import {isObject, isString} from "lodash"
 
 function levelToStatus(level: number) {
   if (level === 10 || level === 20) {
@@ -27,13 +28,16 @@ const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
   const { ts, messages, bindings, level: { value: levelValue } } = logEvent
   const level = levelToStatus(levelValue)
   const timestamp = ts
-  const logEntry = messages.join(" ")
+  const objMessages = _.filter(messages, isObject)
+  const strMessages = _.filter(messages, isString)
+  const logEntry = strMessages.join(" ")
   const defaultMetadata = {
     url: window.document.URL,
     level: level,
     browser: true
   }
-  const metadata = _.reduce(bindings, (acc, el) => {
+  const bindingsAndMessages = bindings.concat(objMessages)
+  const metadata = _.reduce(bindingsAndMessages, (acc, el) => {
     return Object.assign(acc, el)
   }, defaultMetadata)
 

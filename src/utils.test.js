@@ -26,5 +26,28 @@ describe("utils", () => {
     )
     done()
   })
+
+  it("correctly logs metadata for string and object messages", async (done) => {
+    const pinoBrowserLogEvent = {
+      ts: 1593372837388,
+      messages: [{c: 3}, "a message", "from pino logger", {b: 2}], bindings: [{a: 1}], level: {value: 30}
+    }
+    const formatted = formatPinoBrowserLogEvent(pinoBrowserLogEvent)
+
+    expect(formatted).toEqual({
+        metadata: {
+          url: 'http://localhost/',
+          level: 'info',
+          a: 1,
+          b: 2,
+          c: 3,
+          browser: true
+        },
+        log_entry: 'a message from pino logger',
+        timestamp: 1593372837388
+      }
+    )
+    done()
+  })
 })
 
