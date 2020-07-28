@@ -1,4 +1,4 @@
-import { mockProcessStdout } from 'jest-mock-process'
+import {mockProcessStdout} from 'jest-mock-process'
 
 describe('Console stream', () => {
   let consoleStream
@@ -12,7 +12,7 @@ describe('Console stream', () => {
   it('streams correctly', () => {
     const stream = consoleStream()
     stream.write(
-      JSON.stringify({ id: 1, name: `item first`, time: 1594310416073 })
+      JSON.stringify({id: 1, name: `item first`, time: 1594310416073})
     )
     stream.end()
 

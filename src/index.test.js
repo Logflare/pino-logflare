@@ -8,7 +8,7 @@ describe("main", () => {
   it("logflarePinoVercel creates correct stream and transmit objects", async (done) => {
     const {stream, send} = logflarePinoVercel({
       apiKey: "testApiKey",
-      sourceToken: "testSourceToken"
+      sourceToken: "testSourceToken",
     })
 
     expect(stream).toBeInstanceOf(Writable)
