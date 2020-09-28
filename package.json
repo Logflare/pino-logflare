@@ -57,7 +57,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.20.0",
     "batch2": "^1.0.6",
     "commander": "^5.0.0",
     "fast-json-parse": "^1.0.3",
@@ -70,7 +70,7 @@
     "through2": "^3.0.1"
   },
   "prettier": {
-    "singleQuote": true,
+    "singleQuote": false,
     "semi": false,
     "arrowParens": "always"
   },
