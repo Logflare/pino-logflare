@@ -1,8 +1,8 @@
-import { toLogEntry } from "./utils"
+import {toLogEntry} from "./utils"
 import _ from "lodash"
 import stream from "stream"
-import fastJsonParse from "fast-json-parse"
-import { LogflareUserOptionsI } from "logflare-transport-core"
+import {LogflareUserOptionsI} from "logflare-transport-core"
+import {addLogflareTransformDirectives} from "./utils"
 
 const createConsoleWriteStream = (options: LogflareUserOptionsI) => {
   const writeStream = new stream.Writable({
@@ -15,6 +15,7 @@ const createConsoleWriteStream = (options: LogflareUserOptionsI) => {
     _(batch)
       .map(JSON.parse)
       .map(toLogEntry)
+      .map((logEntry: Record<string, any>) => addLogflareTransformDirectives(logEntry, options))
       .map(JSON.stringify)
       .forEach((x) => {
         process.stdout.write(x + '\n')

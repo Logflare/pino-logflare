@@ -11,7 +11,7 @@ function createWriteStream(options: Options) {
   const {size = 1} = options
 
   const parseJsonStream = streams.parseJsonStream()
-  const toLogEntryStream = streams.toLogEntryStream()
+  const toLogEntryStream = streams.toLogEntryStream(options)
   const batchStream = streams.batchStream(size)
   const writeStream = new LogflareHttpClient(options).insertStream()
 

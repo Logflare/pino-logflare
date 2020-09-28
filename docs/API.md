@@ -2,6 +2,7 @@
 
 The library exposes functions to write directly to Logflare from your own application either from the server and/or the client.
 
+
 Example:
 
 ```js
@@ -35,6 +36,22 @@ logger.error(new Error("things got bad"), "error message");
 
 const child = logger.child({ property: "value" });
 child.info("hello child!");
+```
+
+# JavaScript numbers to floats typecasting
+
+To cast all numbers to floats you can use `jsNumbers: true` transforms option
+
+```javascript
+const stream = logflare.createWriteStream({
+  apiKey: "PtzT2OSVy6LQ",
+  apiBaseUrl: "http://localhost:4000",
+  sourceToken: "6856e043-c872-47ff-96b3-dc4af93eeb12",
+  transforms: {
+    numbersToFloats: true
+  }
+});
+
 ```
 
 ## Functions

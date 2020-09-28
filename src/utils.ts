@@ -1,5 +1,6 @@
 import _ from "lodash"
-import {isObject, isString} from "lodash"
+import { isObject, isString } from "lodash"
+import { LogflareUserOptionsI } from "logflare-transport-core"
 
 function levelToStatus(level: number) {
   if (level === 10 || level === 20) {
@@ -18,14 +19,19 @@ function levelToStatus(level: number) {
 }
 
 interface pinoBrowserLogEventI {
-  ts: number,
-  messages: string[],
-  bindings: object[],
-  level: { value: number, label: string }
+  ts: number
+  messages: string[]
+  bindings: object[]
+  level: { value: number; label: string }
 }
 
 const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
-  const { ts, messages, bindings, level: { value: levelValue } } = logEvent
+  const {
+    ts,
+    messages,
+    bindings,
+    level: { value: levelValue },
+  } = logEvent
   const level = levelToStatus(levelValue)
   const timestamp = ts
   const objMessages = _.filter(messages, isObject)
@@ -34,12 +40,16 @@ const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
   const defaultMetadata = {
     url: window.document.URL,
     level: level,
-    browser: true
+    browser: true,
   }
   const bindingsAndMessages = bindings.concat(objMessages)
-  const metadata = _.reduce(bindingsAndMessages, (acc, el) => {
-    return Object.assign(acc, el)
-  }, defaultMetadata)
+  const metadata = _.reduce(
+    bindingsAndMessages,
+    (acc, el) => {
+      return Object.assign(acc, el)
+    },
+    defaultMetadata
+  )
 
   return {
     metadata,
@@ -48,7 +58,21 @@ const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
   }
 }
 
-function toLogEntry(item: Record<string, any>) {
+function addLogflareTransformDirectives(
+  item: Record<string, any>,
+  options: LogflareUserOptionsI
+): Record<string, any> {
+  if (options?.transforms?.numbersToFloats) {
+    return {
+      ...item,
+      "@logflareTransformDirectives": { numbersToFloats: true },
+    }
+  } else {
+    return item
+  }
+}
+
+function toLogEntry(item: Record<string, any>): Record<string, any> {
   const status = levelToStatus(item.level)
   const message = item.msg || status
   const host = item.hostname
@@ -58,8 +82,17 @@ function toLogEntry(item: Record<string, any>) {
   const type = item.type
   const timestamp = item.time || new Date().getTime()
 
-  const cleanedItem = _.omit(item, ["time", "level", "msg", "hostname", "service", "pid", "stack", "type"])
-  const context = _.pickBy({ host, service, pid, stack, type }, x => x)
+  const cleanedItem = _.omit(item, [
+    "time",
+    "level",
+    "msg",
+    "hostname",
+    "service",
+    "pid",
+    "stack",
+    "type",
+  ])
+  const context = _.pickBy({ host, service, pid, stack, type }, (x) => x)
   return {
     metadata: {
       ...cleanedItem,
@@ -71,4 +104,9 @@ function toLogEntry(item: Record<string, any>) {
   }
 }
 
-export { toLogEntry, formatPinoBrowserLogEvent, pinoBrowserLogEventI }
+export {
+  toLogEntry,
+  formatPinoBrowserLogEvent,
+  pinoBrowserLogEventI,
+  addLogflareTransformDirectives,
+}
