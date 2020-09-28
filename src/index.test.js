@@ -1,12 +1,13 @@
-import {logflarePinoVercel, createWriteStream} from "./index"
-import {Writable} from "stream"
+import { logflarePinoVercel, createWriteStream } from "./index"
+import { Writable } from "stream"
 import pino from "pino"
 import Pumpify from "pumpify"
-import {mockProcessStdout} from "jest-mock-process"
+import { mockProcessStdout } from "jest-mock-process"
+import os from "os"
 
 describe("main", () => {
   it("logflarePinoVercel creates correct stream and transmit objects", async (done) => {
-    const {stream, send} = logflarePinoVercel({
+    const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
     })
@@ -35,7 +36,7 @@ describe("main", () => {
   })
 
   it("correctly logs metadata for logger", async (done) => {
-    const {stream, send} = logflarePinoVercel({
+    const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
     })
@@ -43,7 +44,7 @@ describe("main", () => {
     const logger = pino({}, stream)
 
     logger.info(
-      {structuredData: "value1", nestedStructed: {field: "value2"}},
+      { structuredData: "value1", nestedStructed: { field: "value2" } },
       "comment"
     )
 
@@ -53,8 +54,8 @@ describe("main", () => {
     expect(payload).toMatchObject({
       metadata: {
         structuredData: "value1",
-        nestedStructed: {field: "value2"},
-        context: {host: "ontospace", pid: process.pid},
+        nestedStructed: { field: "value2" },
+        context: { host: os.hostname(), pid: process.pid },
         level: "info",
       },
       message: "comment",
@@ -64,17 +65,17 @@ describe("main", () => {
   })
 
   it("correctly logs metadata for child loggers", async (done) => {
-    const {stream, send} = logflarePinoVercel({
+    const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
     })
 
     const logger = pino({}, stream)
 
-    const childLogger = logger.child({child1: true})
+    const childLogger = logger.child({ child1: true })
 
     childLogger.info(
-      {structuredData: "value1", nestedStructed: {field: "value2"}},
+      { structuredData: "value1", nestedStructed: { field: "value2" } },
       "comment"
     )
 
@@ -85,8 +86,8 @@ describe("main", () => {
       metadata: {
         structuredData: "value1",
         child1: true,
-        nestedStructed: {field: "value2"},
-        context: {host: "ontospace", pid: process.pid},
+        nestedStructed: { field: "value2" },
+        context: { host: os.hostname(), pid: process.pid },
         level: "info",
       },
       message: "comment",
@@ -94,5 +95,4 @@ describe("main", () => {
 
     done()
   })
-
 })
