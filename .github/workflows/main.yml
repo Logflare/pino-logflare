@@ -1,0 +1,26 @@
+name: main workflow
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+          registry-url: "https://registry.npmjs.org"
+      - run: git config --global user.email "github-action@users.noreply.github.com"
+      - run: git config --global user.name "GitHub Action"
+      - run: yarn
+      - run: yarn test
+      - run: tsc
+      - run: yarn publish --access public --tag dev --new-version $(npm info . version)-$(echo ${GITHUB_SHA} | cut -c1-8)
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
