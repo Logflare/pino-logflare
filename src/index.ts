@@ -13,7 +13,7 @@ const isNode = typeof process !== 'undefined'
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
   const client = new LogflareHttpClient({...options, fromBrowser: true})
 
-  return (level: number, logEvent: pinoBrowserLogEventI) => {
+  return (level: string, logEvent: pinoBrowserLogEventI) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
     const maybeWithTransforms = addLogflareTransformDirectives(logflareLogEvent, options)
     client.postLogEvents([maybeWithTransforms])
