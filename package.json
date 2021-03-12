@@ -44,17 +44,17 @@
     "@types/pumpify": "^1.4.1",
     "@types/split2": "^2.1.6",
     "@types/through2": "^2.0.36",
-    "@typescript-eslint/eslint-plugin": "^3.4.0",
-    "@typescript-eslint/parser": "^3.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.16.0",
+    "@typescript-eslint/parser": "^4.16.0",
     "eslint": "^7.3.1",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-config-standard": "^14.1.1",
+    "eslint-config-standard": "^16.0.0",
     "eslint-plugin-import": "^2.22.0",
     "jest": "^26.1.0",
     "jest-mock-process": "^1.4.0",
     "pino-multi-stream": "^5.0.0",
     "sinon": "^9.0.1",
-    "typescript": "^3.9.5"
+    "typescript": "^4.2.0"
   },
   "dependencies": {
     "axios": "^0.21.1",
