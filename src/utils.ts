@@ -18,14 +18,26 @@ function levelToStatus(level: number) {
   return "info"
 }
 
-interface pinoBrowserLogEventI {
-  ts: number
-  messages: string[]
-  bindings: object[]
-  level: { value: number; label: string }
+type Level = "fatal" | "error" | "warn" | "info" | "debug" | "trace"
+type SerializerFn = (value: any) => any
+
+interface Bindings {
+  level?: Level | string
+  serializers?: { [key: string]: SerializerFn }
+  [key: string]: any
 }
 
-const formatPinoBrowserLogEvent = (logEvent: pinoBrowserLogEventI) => {
+interface LogEvent {
+  ts: number
+  messages: any[]
+  bindings: Bindings[]
+  level: {
+    label: string
+    value: number
+  }
+}
+
+const formatPinoBrowserLogEvent = (logEvent: LogEvent) => {
   const {
     ts,
     messages,
@@ -107,6 +119,6 @@ function toLogEntry(item: Record<string, any>): Record<string, any> {
 export {
   toLogEntry,
   formatPinoBrowserLogEvent,
-  pinoBrowserLogEventI,
+  LogEvent,
   addLogflareTransformDirectives,
 }
