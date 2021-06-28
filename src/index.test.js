@@ -1,5 +1,5 @@
 import { logflarePinoVercel, createWriteStream } from "./index"
-import { Writable } from "stream"
+import { Writable } from "stream-browserify"
 import pino from "pino"
 import Pumpify from "pumpify"
 import { mockProcessStdout } from "jest-mock-process"
