@@ -34,6 +34,10 @@ See the [API](./docs/API.md) documentation for details.
 Set up `pino-logflare` to use in your Vercel project.
 See the [VERCEL](./docs/VERCEL.md) documentation for details.
 
+## Known Issues
+
+* Not compatible with `pino-pretty`.
+
 ## Credits
 
 Thanks to [@zackkrida](https://github.com/zackkrida) for creating the initial version of pino-logflare.
