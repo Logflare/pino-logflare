@@ -1,6 +1,7 @@
 import createHttpWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
 import {
+  Level,
   LogEvent,
   formatPinoBrowserLogEvent,
   addLogflareTransformDirectives,
@@ -21,7 +22,7 @@ const isNode =
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
   const client = new LogflareHttpClient({ ...options, fromBrowser: true })
 
-  return (level: string | number, logEvent: LogEvent) => {
+  return (level: Level, logEvent: LogEvent) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
     const maybeWithTransforms = addLogflareTransformDirectives(
       logflareLogEvent,
