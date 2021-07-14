@@ -119,6 +119,7 @@ function toLogEntry(item: Record<string, any>): Record<string, any> {
 export {
   toLogEntry,
   formatPinoBrowserLogEvent,
+  Level,
   LogEvent,
   addLogflareTransformDirectives,
 }
