@@ -22,7 +22,7 @@ const isNode =
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
   const client = new LogflareHttpClient({ ...options, fromBrowser: true })
 
-  return (level: Level, logEvent: LogEvent) => {
+  return (level: Level | number, logEvent: LogEvent) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
     const maybeWithTransforms = addLogflareTransformDirectives(
       logflareLogEvent,
