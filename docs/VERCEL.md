@@ -14,7 +14,7 @@ import { logflarePinoVercel } from 'pino-logflare'
 // create pino-logflare console stream for serverless functions and send function for browser logs
 const { stream, send } = logflarePinoVercel({
     apiKey: "YOUR_KEY",
-    sourceToken: "0666b118-b754-45cc-bf19-XXXXXXXXXXX"
+    sourceToken: "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX"
 });
 
 // create pino loggger
@@ -39,8 +39,8 @@ Type: `String` _(required)_
 
 The API key that can be found in your Logflare account (Integration > APIs).
 
-#### source
+#### sourceToken (source id)
 
 Type: `String`
 
-Set the source to which the logs are sent
+Set the sourceToken to the id of the source to which the logs are sent (this can be found on your dashboard under the name of your source)
