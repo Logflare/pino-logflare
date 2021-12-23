@@ -1,5 +1,4 @@
 import { toLogEntry } from "./utils"
-import _ from "lodash"
 import stream from "stream-browserify"
 import { LogflareUserOptionsI } from "logflare-transport-core"
 import { addLogflareTransformDirectives } from "./utils"
@@ -12,13 +11,13 @@ const createConsoleWriteStream = (options: LogflareUserOptionsI) => {
 
   writeStream._write = (chunk: any, encoding: any, callback: any) => {
     const batch = Array.isArray(chunk) ? chunk : [chunk]
-    _(batch)
-      .map(JSON.parse)
+    batch
+      .map((chunkItem) => JSON.parse(chunkItem))
       .map(toLogEntry)
       .map((logEntry: Record<string, any>) =>
         addLogflareTransformDirectives(logEntry, options)
       )
-      .map(JSON.stringify)
+      .map((chunkItem) => JSON.stringify(chunkItem))
       .forEach((x) => {
         process.stdout.write(x + "\n")
       })
