@@ -11,7 +11,7 @@ function isString(value?: unknown): value is string {
 /**
  * Takes an object and removes all falsy properties
  */
-const removeFalsy = <TInput>(input: TInput): TInput => {
+function removeFalsy<TInput>(input: TInput): TInput {
   if (input === null || input === undefined) {
     return input
   }
