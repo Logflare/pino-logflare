@@ -22,7 +22,7 @@ function main() {
         const writeStream = pinoLogflare.createWriteStream(config)
         process.stdin.pipe(writeStream)
         process.stdin.pipe(process.stdout)
-      } catch (error) {
+      } catch (error: any) {
         console.error(error.message)
       }
     })
