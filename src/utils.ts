@@ -1,6 +1,41 @@
-import _ from "lodash"
-import { isObject, isString } from "lodash"
 import { LogflareUserOptionsI } from "logflare-transport-core"
+
+function isObject(value?: unknown): value is object {
+  return typeof value === "object" && value !== null
+}
+
+function isString(value?: unknown): value is string {
+  return typeof value === "string"
+}
+
+/**
+ * Takes an object and removes all falsy properties
+ */
+function removeFalsy<TInput>(input: TInput): TInput {
+  if (input === null || input === undefined) {
+    return input
+  }
+
+  if (typeof input === "object" && input !== null) {
+    let key: keyof typeof input
+
+    for (key in input) {
+      const value = input[key]
+
+      if (!value) {
+        delete input[key]
+      } else if (typeof value === "object") {
+        removeFalsy(value)
+
+        if (!Object.keys(value).length) {
+          delete input[key]
+        }
+      }
+    }
+  }
+
+  return input
+}
 
 function levelToStatus(level: number) {
   if (level === 10 || level === 20) {
@@ -46,8 +81,8 @@ const formatPinoBrowserLogEvent = (logEvent: LogEvent) => {
   } = logEvent
   const level = levelToStatus(levelValue)
   const timestamp = ts
-  const objMessages = _.filter(messages, isObject)
-  const strMessages = _.filter(messages, isString)
+  const objMessages = messages.filter(isObject)
+  const strMessages = messages.filter(isString)
   const logEntry = strMessages.join(" ")
   const defaultMetadata = {
     url: window.document.URL,
@@ -55,13 +90,9 @@ const formatPinoBrowserLogEvent = (logEvent: LogEvent) => {
     browser: true,
   }
   const bindingsAndMessages = bindings.concat(objMessages)
-  const metadata = _.reduce(
-    bindingsAndMessages,
-    (acc, el) => {
-      return Object.assign(acc, el)
-    },
-    defaultMetadata
-  )
+  const metadata = bindingsAndMessages.reduce((acc, el) => {
+    return Object.assign(acc, el)
+  }, defaultMetadata)
 
   return {
     metadata,
@@ -94,17 +125,18 @@ function toLogEntry(item: Record<string, any>): Record<string, any> {
   const type = item.type
   const timestamp = item.time || new Date().getTime()
 
-  const cleanedItem = _.omit(item, [
-    "time",
-    "level",
-    "msg",
-    "hostname",
-    "service",
-    "pid",
-    "stack",
-    "type",
-  ])
-  const context = _.pickBy({ host, service, pid, stack, type }, (x) => x)
+  const {
+    time: _time,
+    level: _level,
+    msg: _msg,
+    hostname: _hostname,
+    service: _service,
+    pid: _pid,
+    stack: _stack,
+    type: _type,
+    ...cleanedItem
+  } = item
+  const context = removeFalsy({ host, service, pid, stack, type })
   return {
     metadata: {
       ...cleanedItem,
