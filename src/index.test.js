@@ -1,5 +1,4 @@
 import { logflarePinoVercel, createWriteStream } from "./index"
-import { Writable } from "stream-browserify"
 import pino from "pino"
 import Pumpify from "pumpify"
 import { mockProcessStdout } from "jest-mock-process"
@@ -12,7 +11,7 @@ describe("main", () => {
       sourceToken: "testSourceToken",
     })
 
-    expect(stream).toBeInstanceOf(Writable)
+    expect(stream.write).toBeInstanceOf(Function)
     expect(send).toBeInstanceOf(Function)
     done()
   })
