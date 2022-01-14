@@ -1,4 +1,3 @@
-import createHttpWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
 import {
   Level,
@@ -39,12 +38,4 @@ const logflarePinoVercel = (options: LogflareUserOptionsI) => {
   }
 }
 
-const createWriteStream = createHttpWriteStream
-
-export {
-  createWriteStream,
-  logflarePinoVercel,
-  createPinoBrowserSend,
-  createConsoleWriteStream,
-  createHttpWriteStream,
-}
+export { logflarePinoVercel, createPinoBrowserSend, createConsoleWriteStream }

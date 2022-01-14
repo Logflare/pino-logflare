@@ -1,6 +1,5 @@
 import { logflarePinoVercel, createWriteStream } from "./index"
 import pino from "pino"
-import Pumpify from "pumpify"
 import { mockProcessStdout } from "jest-mock-process"
 import os from "os"
 
@@ -13,16 +12,6 @@ describe("main", () => {
 
     expect(stream.write).toBeInstanceOf(Function)
     expect(send).toBeInstanceOf(Function)
-    done()
-  })
-
-  it("creates a writable http stream", async (done) => {
-    const writeStream = createWriteStream({
-      apiBaseUrl: "http://localhost:4000/",
-      apiKey: "test-key",
-      sourceToken: "test-token",
-    })
-    expect(writeStream).toBeInstanceOf(Pumpify)
     done()
   })
 })

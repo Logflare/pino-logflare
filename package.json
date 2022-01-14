@@ -40,7 +40,6 @@
     "@babel/preset-env": "^7.10.3",
     "@babel/preset-typescript": "^7.10.1",
     "@types/node": "^14.0.14",
-    "@types/pumpify": "^1.4.1",
     "@types/split2": "^2.1.6",
     "@types/through2": "^2.0.36",
     "@typescript-eslint/eslint-plugin": "^4.16.0",
@@ -61,7 +60,6 @@
     "fast-json-parse": "^1.0.3",
     "logflare-transport-core": "^0.3.0",
     "pino": "^6.3.2",
-    "pumpify": "^2.0.1",
     "split2": "^3.1.1",
     "through2": "^3.0.1"
   },
