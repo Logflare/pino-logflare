@@ -85,7 +85,7 @@ const formatPinoBrowserLogEvent = (logEvent: LogEvent) => {
   const strMessages = messages.filter(isString)
   const logEntry = strMessages.join(" ")
   const defaultMetadata = {
-    url: window.document.URL,
+    url: getDocumentUrl(),
     level: level,
     browser: true,
   }
@@ -98,6 +98,12 @@ const formatPinoBrowserLogEvent = (logEvent: LogEvent) => {
     metadata,
     log_entry: logEntry,
     timestamp,
+  }
+}
+
+function getDocumentUrl():string | undefined {
+  if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
+    return window.document.URL 
   }
 }
 
