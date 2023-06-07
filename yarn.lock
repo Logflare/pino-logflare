@@ -1640,16 +1640,6 @@ batch2@^1.0.6:
   dependencies:
     through2 "^3.0.1"
 
-big-integer@^1.6.48:
-  version "1.6.48"
-  resolved "https://registry.npmjs.org/big-integer/-/big-integer-1.6.48.tgz#8fd88bd1632cba4a1c8c3e3d7159f08bb95b4b9e"
-  integrity sha512-j51egjPa7/i+RdiRuJbPdJ2FIUYYPhvYLjzoYbcMMm62ooO6F94fETG4MTs46zPAF9Brs04OajboA/qTGuz78w==
-
-bignumber.js@^9.0.0:
-  version "9.0.1"
-  resolved "https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.0.1.tgz#8d7ba124c882bfd8e43260c67475518d0689e4e5"
-  integrity sha512-IdZR9mh6ahOBv/hYGiXyVuyCetmGJhtYkqLBpTStdhEGjegpPlUawydyaF3pbIOFynJTpllEs+NP+CS9jKFLjA==
-
 brace-expansion@^1.1.7:
   version "1.1.11"
   resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz#3c7fcbf529d87226f3d2f52b966ff5271eb441dd"
@@ -1981,7 +1971,7 @@ decamelize@^1.2.0:
   resolved "https://registry.npmjs.org/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
   integrity sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=
 
-decimal.js@^10.2.0, decimal.js@^10.2.1:
+decimal.js@^10.2.1:
   version "10.4.0"
   resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.4.0.tgz#97a7448873b01e92e5ff9117d89a7bca8e63e0fe"
   integrity sha512-Nv6ENEzyPQ6AItkGwLE2PGKinZZ9g59vSh2BeH6NqPu0OTKZ5ruJsVqh/orbAnqXc9pBbgXAIrc2EyaCj8NpGg==
@@ -3691,14 +3681,10 @@ lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.7.0:
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-logflare-transport-core@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.3.1.tgz#93b74e99384b39cad7d5bfbf96fc485b1812b66a"
-  integrity sha512-wyjqtwiiXYekBXTRSLP1/JBq5nJwoq8ehvCxTrwW5M8f92TMTNf7xVaBrDeQlRxxcWd1llW8Fdapq5o2xMblPg==
-  dependencies:
-    big-integer "^1.6.48"
-    bignumber.js "^9.0.0"
-    decimal.js "^10.2.0"
+logflare-transport-core@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.3.3.tgz#dade63f6b414b7d01727825ce0ccb830ed6f0f7e"
+  integrity sha512-n82NsRVWvlaa3jd9QQ8rDroCjCJcIamQOlarLDBou9RsF0QaRv39rduy0ToPmlGQn1OPZBwlsv+R36lXupSmVQ==
 
 lru-cache@^6.0.0:
   version "6.0.0"
