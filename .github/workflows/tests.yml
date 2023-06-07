@@ -8,13 +8,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+
     steps:
       - uses: actions/checkout@v2
-      - name: build
+      - name: Setup node  ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: "14.x"
+          node-version: ${{ matrix.node-version }}
           registry-url: "https://registry.npmjs.org"
       - run: yarn
       - run: yarn test
-      - run: tsc
+      - run: yarn build
