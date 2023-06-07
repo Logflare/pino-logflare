@@ -1,4 +1,4 @@
-name: main workflow
+name: Publish dev package
 
 on:
   push:

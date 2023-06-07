@@ -1,0 +1,25 @@
+name: Publish to npm registry (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org"
+      - run: git config --global user.email "github-action@users.noreply.github.com"
+      - run: git config --global user.name "GitHub Action"
+      - run: yarn
+      - run: yarn test
+      - run: yarn build
+      - name: Publish production package to npm
+        run: yarn publish --access public --tag latest --new-version $(npm run --silent vsn)
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
