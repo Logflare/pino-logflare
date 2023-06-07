@@ -3691,10 +3691,10 @@ lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.7.0:
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-logflare-transport-core@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.3.0.tgz#a6510531d92c9ddb15f79a882ff2746f2fab1de6"
-  integrity sha512-k6zcKGVaCP8PdocYe0AAQC9AKJK5h8+1ujBisBfCRTk+KVYXAQUZ4gKMzhbOtQfN1zywzV8kBcen4wUyeWnhuw==
+logflare-transport-core@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/logflare-transport-core/-/logflare-transport-core-0.3.1.tgz#93b74e99384b39cad7d5bfbf96fc485b1812b66a"
+  integrity sha512-wyjqtwiiXYekBXTRSLP1/JBq5nJwoq8ehvCxTrwW5M8f92TMTNf7xVaBrDeQlRxxcWd1llW8Fdapq5o2xMblPg==
   dependencies:
     big-integer "^1.6.48"
     bignumber.js "^9.0.0"
