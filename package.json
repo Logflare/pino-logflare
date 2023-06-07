@@ -8,7 +8,8 @@
     "build": "tsc",
     "dev:cli": "node ./test/debug.js | node ./src/cli.js",
     "test": "jest",
-    "test.watch": "jest --watch"
+    "test.watch": "jest --watch",
+    "vsn": "node -e \"console.log(require('./package.json').version);\""
   },
   "bin": {
     "pino-logflare": "dist/cli.js"

@@ -1,4 +1,4 @@
-name: main workflow
+name: Publish dev package
 
 on:
   push:
@@ -19,8 +19,8 @@ jobs:
       - run: git config --global user.name "GitHub Action"
       - run: yarn
       - run: yarn test
-      - run: tsc
-      - run: yarn publish --access public --tag dev --new-version $(npm info . version)-$(echo ${GITHUB_SHA} | cut -c1-8)
+      - run: yarn build
+      - run: yarn publish --access public --tag dev --new-version $(npm run --silent vsn)-$(echo ${GITHUB_SHA} | cut -c1-8)
         env:
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
