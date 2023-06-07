@@ -63,6 +63,25 @@ describe("main", () => {
     done()
   })
 
+  it("createWriteStream correctly calls onError callbacks", async (done) => {
+    const mockFn = jest.fn()
+    const stream = createWriteStream({
+      apiKey: "testApiKey",
+      sourceToken: "testSourceToken",
+      onError: mockFn,
+    })
+
+    global.fetch = jest.fn().mockImplementation(async () => {
+      throw new Error("some error")
+    })
+    const logger = pino({}, stream)
+    await logger.info({ some: "value" }, "should error")
+
+    expect(global.fetch).toBeCalledTimes(1)
+    expect(mockFn).toBeCalledTimes(1)
+    done()
+  })
+
   it("correctly logs metadata for child loggers", async (done) => {
     const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",

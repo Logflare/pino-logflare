@@ -2,40 +2,42 @@
 
 The library exposes functions to write directly to Logflare from your own application either from the server and/or the client.
 
-
 Example:
 
 ```js
-import pino from 'pino'
-import { createPinoBrowserSend, createWriteStream } from 'pino-logflare'
+import pino from "pino"
+import { createPinoBrowserSend, createWriteStream } from "pino-logflare"
 
 // create pino-logflare stream
 const stream = createWriteStream({
-    apiKey: "YOUR_API_KEY",
-    sourceToken: "b1b334ff-686c-472d-8fd7-XXXXXXXXXXXX"
-});
+  apiKey: "YOUR_API_KEY",
+  sourceToken: "b1b334ff-686c-472d-8fd7-XXXXXXXXXXXX",
+})
 
 // create pino-logflare browser stream
 const send = createPinoBrowserSend({
-    apiKey: "YOUR_API_KEY",
-    sourceToken: "b1b334ff-686c-472d-8fd7-XXXXXXXXXXXX"
-});
+  apiKey: "YOUR_API_KEY",
+  sourceToken: "b1b334ff-686c-472d-8fd7-XXXXXXXXXXXX",
+})
 
 // create pino loggger
-const logger = pino({
+const logger = pino(
+  {
     browser: {
-        transmit: {
-            send: send,
-        }
-    }
-}, stream);
+      transmit: {
+        send: send,
+      },
+    },
+  },
+  stream
+)
 
 // log some events
-logger.info("Informational message");
-logger.error(new Error("things got bad"), "error message");
+logger.info("Informational message")
+logger.error(new Error("things got bad"), "error message")
 
-const child = logger.child({ property: "value" });
-child.info("hello child!");
+const child = logger.child({ property: "value" })
+child.info("hello child!")
 ```
 
 # JavaScript numbers to floats typecasting
@@ -48,10 +50,9 @@ const stream = logflare.createWriteStream({
   apiBaseUrl: "http://localhost:4000",
   sourceToken: "6856e043-c872-47ff-96b3-dc4af93eeb12",
   transforms: {
-    numbersToFloats: true
-  }
-});
-
+    numbersToFloats: true,
+  },
+})
 ```
 
 ## Functions
@@ -65,7 +66,20 @@ Example:
 ```js
 const writeStream = createWriteStream({
   apiKey: "API_KEY",
+  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
+})
+```
+
+To handle ingestion errors, add in the following option:
+
+```js
+const writeStream = createWriteStream({
+  apiKey: "API_KEY",
   sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx"
+  // optional callback, callback be invoked on each error raised
+  onError: (payload, err)=> {
+    // do something with the ingestion payload that would have been sent to Logflare.
+  }
 });
 ```
 
@@ -96,8 +110,8 @@ Example:
 ```js
 const send = createPinoBrowserSend({
   apiKey: "API_KEY",
-  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx"
-});
+  sourceToken: "49e4f31e-f7e9-4f42-8c1e-xxxxxxxxxx",
+})
 ```
 
 #### apiKey
