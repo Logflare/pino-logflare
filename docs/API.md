@@ -83,6 +83,20 @@ const writeStream = createWriteStream({
 });
 ```
 
+To customize the payload, use the the `onPreparePayload` option:
+
+```js
+const writeStream = createWriteStream({
+  ...,
+  // optional callback, by default, the received object will be nested under the `metadata` key
+  onPreparePayload: (payload, meta)=> {
+    // the `meta` arg contains cleaned information of raw payload
+    // You can add in top-level keys via this callback, or completely disable `metadata` key nesting by passing the payload as is, as shown below.
+    return payload
+  }
+});
+```
+
 #### apiKey
 
 Type: `String` _(required)_
