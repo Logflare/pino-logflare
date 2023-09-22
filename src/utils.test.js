@@ -1,7 +1,7 @@
 import {
   formatPinoBrowserLogEvent,
   addLogflareTransformDirectives,
-  toLogEntry,
+  handlePreparePayload
 } from "./utils"
 
 describe("utils", () => {
@@ -96,7 +96,7 @@ describe("utils", () => {
     done()
   })
 
-  describe("toLogEntry", () => {
+  describe("handlePreparePayload", () => {
     it("correctly cleans the passed item before adding its properties to metadata", () => {
       const item = {
         time: 1532081790750,
@@ -110,7 +110,7 @@ describe("utils", () => {
         v: 1,
       }
 
-      const logEntry = toLogEntry(item)
+      const logEntry = handlePreparePayload(item)
 
       expect(logEntry).toMatchObject({
         metadata: {
@@ -142,7 +142,7 @@ describe("utils", () => {
         v: 1,
       }
 
-      const logEntry = toLogEntry(item)
+      const logEntry = handlePreparePayload(item)
 
       expect(logEntry).toMatchObject({
         metadata: {
