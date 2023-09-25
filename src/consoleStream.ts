@@ -1,14 +1,14 @@
-import { toLogEntry } from "./utils"
-import { LogflareUserOptionsI } from "logflare-transport-core"
+import { handlePreparePayload } from "./utils"
 import { addLogflareTransformDirectives } from "./utils"
+import { Options } from "./httpStream"
 
-const createConsoleWriteStream = (options: LogflareUserOptionsI) => {
+const createConsoleWriteStream = (options: Options) => {
   return {
     write: (chunk: any) => {
       const batch = Array.isArray(chunk) ? chunk : [chunk]
       batch
         .map((chunkItem) => JSON.parse(chunkItem))
-        .map(toLogEntry)
+        .map(item=> handlePreparePayload(item, options))
         .map((logEntry: Record<string, any>) =>
           addLogflareTransformDirectives(logEntry, options)
         )

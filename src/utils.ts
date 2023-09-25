@@ -1,5 +1,5 @@
 import { LogflareUserOptionsI } from "logflare-transport-core"
-
+import { Options, PayloadMeta, PreparePayloadCallback } from "./httpStream"
 function isObject(value?: unknown): value is object {
   return typeof value === "object" && value !== null
 }
@@ -101,9 +101,9 @@ const formatPinoBrowserLogEvent = (logEvent: LogEvent) => {
   }
 }
 
-function getDocumentUrl():string | undefined {
-  if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
-    return window.document.URL 
+function getDocumentUrl(): string | undefined {
+  if (typeof window !== "undefined" && typeof window.document !== "undefined") {
+    return window.document.URL
   }
 }
 
@@ -121,7 +121,7 @@ function addLogflareTransformDirectives(
   }
 }
 
-function toLogEntry(item: Record<string, any>): Record<string, any> {
+const extractMeta = (item: Record<string, any>) => {
   const status = levelToStatus(item.level)
   const message = item.msg || status
   const host = item.hostname
@@ -129,7 +129,7 @@ function toLogEntry(item: Record<string, any>): Record<string, any> {
   const pid = item.pid
   const stack = item.stack
   const type = item.type
-  const timestamp = item.time || new Date().getTime()
+  const timestamp = item.time || item.timestamp || new Date().getTime()
 
   const {
     time: _time,
@@ -140,22 +140,43 @@ function toLogEntry(item: Record<string, any>): Record<string, any> {
     pid: _pid,
     stack: _stack,
     type: _type,
-    ...cleanedItem
+    ...cleanedPayload
   } = item
+
   const context = removeFalsy({ host, service, pid, stack, type })
   return {
-    metadata: {
-      ...cleanedItem,
-      context,
-      level: status,
-    },
-    message,
+    cleanedPayload,
+    context,
     timestamp,
+    message: message,
+    level: status,
+  } as PayloadMeta
+}
+
+const defaultPreparePayload: PreparePayloadCallback = (_item, meta) => {
+  return {
+    metadata: {
+      ...meta.cleanedPayload,
+      context: meta.context,
+      level: meta.level,
+    },
+    message: meta.message,
+    timestamp: meta.timestamp,
   }
 }
 
+const handlePreparePayload = (item: Record<string, any>, options: Options) => {
+  const meta = extractMeta(item)
+  const callback =
+  options && options.onPreparePayload
+  ? options.onPreparePayload
+  : defaultPreparePayload
+  const result = callback(item, meta)
+  return result
+}
+
 export {
-  toLogEntry,
+  handlePreparePayload,
   formatPinoBrowserLogEvent,
   Level,
   LogEvent,

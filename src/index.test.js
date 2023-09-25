@@ -82,6 +82,29 @@ describe("main", () => {
     done()
   })
 
+  it("createWriteStream can customize payload using callback", async (done) => {
+    const mockFn = jest.fn().mockImplementation((item, meta) => {
+      return { some: "overwritten" }
+    })
+    const stream = createWriteStream({
+      apiKey: "testApiKey",
+      sourceToken: "testSourceToken",
+      onPreparePayload: mockFn,
+    })
+
+    global.fetch = jest.fn()
+    const logger = pino({}, stream)
+    await logger.info({ some: "value" }, "should error")
+
+    expect(global.fetch).toBeCalledTimes(1)
+    expect(mockFn).toBeCalledTimes(1)
+
+    const body = global.fetch.mock.calls[0][1]["body"]
+    const decoded = JSON.parse(body)
+    expect(decoded["batch"][0]).toStrictEqual({ some: "overwritten" })
+    done()
+  })
+
   it("correctly logs metadata for child loggers", async (done) => {
     const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",

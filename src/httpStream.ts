@@ -6,8 +6,23 @@ import * as streams from "./streams"
 import stream from "stream"
 const pumpify = require("pumpify")
 
-interface Options extends LogflareUserOptionsI {
+export interface PayloadMeta{
+  cleanedPayload: Record<string, any>,
+  message?: string
+  level?: string
+  timestamp?: string
+  context: {
+    host?: string
+    service?: string
+    pid?: string
+    stack?: string
+    type?: string
+  }
+}
+export type PreparePayloadCallback = (payload: Record<string, any>, meta: PayloadMeta)=> Record<string, any>
+export interface Options extends LogflareUserOptionsI {
   size?: number
+  onPreparePayload?: PreparePayloadCallback
 }
 
 function createWriteStream(options: Options) {
