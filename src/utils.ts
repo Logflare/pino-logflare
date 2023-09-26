@@ -121,7 +121,7 @@ function addLogflareTransformDirectives(
   }
 }
 
-const extractMeta = (item: Record<string, any>) => {
+export const extractPayloadMeta = (item: Record<string, any>) => {
   const status = levelToStatus(item.level)
   const message = item.msg || status
   const host = item.hostname
@@ -153,7 +153,7 @@ const extractMeta = (item: Record<string, any>) => {
   } as PayloadMeta
 }
 
-const defaultPreparePayload: PreparePayloadCallback = (_item, meta) => {
+export const defaultPreparePayload: PreparePayloadCallback = (_item, meta) => {
   return {
     metadata: {
       ...meta.cleanedPayload,
@@ -166,11 +166,11 @@ const defaultPreparePayload: PreparePayloadCallback = (_item, meta) => {
 }
 
 const handlePreparePayload = (item: Record<string, any>, options: Options) => {
-  const meta = extractMeta(item)
+  const meta = extractPayloadMeta(item)
   const callback =
-  options && options.onPreparePayload
-  ? options.onPreparePayload
-  : defaultPreparePayload
+    options && options.onPreparePayload
+      ? options.onPreparePayload
+      : defaultPreparePayload
   const result = callback(item, meta)
   return result
 }

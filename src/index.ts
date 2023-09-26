@@ -1,5 +1,6 @@
 import createHttpWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
+import { defaultPreparePayload, extractPayloadMeta } from "./utils"
 import {
   Level,
   LogEvent,
@@ -47,4 +48,6 @@ export {
   createPinoBrowserSend,
   createConsoleWriteStream,
   createHttpWriteStream,
+  defaultPreparePayload,
+  extractPayloadMeta,
 }

@@ -86,13 +86,17 @@ const writeStream = createWriteStream({
 To customize the payload, use the the `onPreparePayload` option:
 
 ```js
+import { defaultPreparePayload } from "pino-logflare"
+
 const writeStream = createWriteStream({
   ...,
   // optional callback, by default, the received object will be nested under the `metadata` key
   onPreparePayload: (payload, meta)=> {
     // the `meta` arg contains cleaned information of raw payload
     // You can add in top-level keys via this callback, or completely disable `metadata` key nesting by passing the payload as is, as shown below.
-    return payload
+    const item = defaultPreparePayload(payload, meta)
+    item["my_custom_key"] = "some value'
+    return item
   }
 });
 ```
