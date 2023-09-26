@@ -1,7 +1,9 @@
 import {
   formatPinoBrowserLogEvent,
   addLogflareTransformDirectives,
-  handlePreparePayload
+  handlePreparePayload,
+  defaultPreparePayload,
+  extractPayloadMeta,
 } from "./utils"
 
 describe("utils", () => {
@@ -113,6 +115,23 @@ describe("utils", () => {
       const logEntry = handlePreparePayload(item)
 
       expect(logEntry).toMatchObject({
+        metadata: {
+          v: 1,
+          context: {
+            host: item.hostname,
+            service: item.service,
+            pid: item.pid,
+            stack: item.stack,
+            type: item.type,
+          },
+          level: "error",
+        },
+        message: item.msg,
+        timestamp: item.time,
+      })
+
+      const meta = extractPayloadMeta(item)
+      expect(defaultPreparePayload(item, meta)).toMatchObject({
         metadata: {
           v: 1,
           context: {
