@@ -6,8 +6,8 @@ import * as streams from "./streams"
 import stream from "stream"
 const pumpify = require("pumpify")
 
-export interface PayloadMeta{
-  cleanedPayload: Record<string, any>,
+export interface PayloadMeta {
+  cleanedPayload: Record<string, any>
   message?: string
   level?: string
   timestamp?: string
@@ -19,7 +19,10 @@ export interface PayloadMeta{
     type?: string
   }
 }
-export type PreparePayloadCallback = (payload: Record<string, any>, meta: PayloadMeta)=> Record<string, any>
+export type PreparePayloadCallback = (
+  payload: Record<string, any>,
+  meta: PayloadMeta,
+) => Record<string, any>
 export interface Options extends LogflareUserOptionsI {
   size?: number
   onPreparePayload?: PreparePayloadCallback

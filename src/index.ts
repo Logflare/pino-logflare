@@ -1,6 +1,11 @@
-import createHttpWriteStream from "./httpStream"
+import build from "pino-abstract-transport"
+import createWriteStream from "./httpStream"
 import createConsoleWriteStream from "./consoleStream"
-import { defaultPreparePayload, extractPayloadMeta } from "./utils"
+import {
+  defaultPreparePayload,
+  extractPayloadMeta,
+  handlePreparePayload,
+} from "./utils"
 import {
   Level,
   LogEvent,
@@ -11,6 +16,10 @@ import {
   LogflareHttpClient,
   LogflareUserOptionsI,
 } from "logflare-transport-core"
+
+interface LogflareTransportOptions extends LogflareUserOptionsI {
+  size?: number
+}
 
 const isBrowser =
   typeof window !== "undefined" && typeof window.document !== "undefined"
@@ -27,7 +36,7 @@ const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
     const maybeWithTransforms = addLogflareTransformDirectives(
       logflareLogEvent,
-      options
+      options,
     )
     client.postLogEvents([maybeWithTransforms])
   }
@@ -40,14 +49,44 @@ const logflarePinoVercel = (options: LogflareUserOptionsI) => {
   }
 }
 
-const createWriteStream = createHttpWriteStream
+export default async function (options: LogflareTransportOptions) {
+  const client = new LogflareHttpClient(options)
+  const { size = 1 } = options
+  let batch: any[] = []
+
+  return build(
+    async function (newEvents) {
+      for await (const event of newEvents) {
+        const preparedEvents = handlePreparePayload(event, options)
+        batch.push(preparedEvents)
+
+        if (batch.length >= size) {
+          await client.postLogEvents(batch)
+          batch = []
+        }
+      }
+
+      // Send any remaining logs
+      if (batch.length > 0) {
+        await client.postLogEvents(batch)
+      }
+    },
+    {
+      // Add stream options to properly handle stdin
+      close: async () => {
+        // Handle cleanup if needed
+        if (batch.length > 0) {
+          await client.postLogEvents(batch)
+        }
+      },
+    },
+  )
+}
 
 export {
-  createWriteStream,
   logflarePinoVercel,
   createPinoBrowserSend,
-  createConsoleWriteStream,
-  createHttpWriteStream,
+  createWriteStream,
   defaultPreparePayload,
   extractPayloadMeta,
 }

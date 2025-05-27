@@ -109,7 +109,7 @@ function getDocumentUrl(): string | undefined {
 
 function addLogflareTransformDirectives(
   item: Record<string, any>,
-  options: LogflareUserOptionsI
+  options: LogflareUserOptionsI,
 ): Record<string, any> {
   if (options?.transforms?.numbersToFloats) {
     return {

@@ -1,6 +1,6 @@
-'use strict'
+"use strict"
 
-const logflare = require('../src/logflare')
+const logflare = require("../src/logflare")
 
 async function main() {
   const apiKey = process.env.LOGFLARE_API_KEY
@@ -8,9 +8,9 @@ async function main() {
 
   // await client.validate()
   await client.insert({
-    message: 'pino test',
-    source: 'bla',
-    ddtags: 'foo:bar',
+    message: "pino test",
+    source: "bla",
+    ddtags: "foo:bar",
   })
 
   // let ws = client.insertStream()

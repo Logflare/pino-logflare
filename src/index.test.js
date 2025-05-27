@@ -1,11 +1,22 @@
-import { logflarePinoVercel, createWriteStream } from "./index"
+import pinoLogflare, { logflarePinoVercel, createWriteStream } from "./index"
 import pino from "pino"
 import Pumpify from "pumpify"
 import { mockProcessStdout } from "jest-mock-process"
 import os from "os"
+import { Transform } from "stream"
+
+describe("pinoLogflare", () => {
+  it("is a Transform stream", async () => {
+    const stream = await pinoLogflare({
+      apiKey: "testApiKey",
+      sourceToken: "testSourceToken",
+    })
+    expect(stream).toBeInstanceOf(Transform)
+  })
+})
 
 describe("main", () => {
-  it("logflarePinoVercel creates correct stream and transmit objects", async (done) => {
+  it("logflarePinoVercel creates correct stream and transmit objects", async () => {
     const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
@@ -13,17 +24,15 @@ describe("main", () => {
 
     expect(stream.write).toBeInstanceOf(Function)
     expect(send).toBeInstanceOf(Function)
-    done()
   })
 
-  it("creates a writable http stream", async (done) => {
+  it("creates a writable http stream", async () => {
     const writeStream = createWriteStream({
       apiBaseUrl: "http://localhost:4000/",
       apiKey: "test-key",
       sourceToken: "test-token",
     })
     expect(writeStream).toBeInstanceOf(Pumpify)
-    done()
   })
 })
 
@@ -34,7 +43,7 @@ describe("main", () => {
     mockStdout = mockProcessStdout()
   })
 
-  it("correctly logs metadata for logger", async (done) => {
+  it("correctly logs metadata for logger", async () => {
     const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
@@ -44,7 +53,7 @@ describe("main", () => {
 
     logger.info(
       { structuredData: "value1", nestedStructed: { field: "value2" } },
-      "comment"
+      "comment",
     )
 
     const [[mockCall]] = mockStdout.mock.calls
@@ -59,11 +68,9 @@ describe("main", () => {
       },
       message: "comment",
     })
-
-    done()
   })
 
-  it("createWriteStream correctly calls onError callbacks", async (done) => {
+  it("createWriteStream correctly calls onError callbacks", async () => {
     const mockFn = jest.fn()
     const stream = createWriteStream({
       apiKey: "testApiKey",
@@ -79,10 +86,9 @@ describe("main", () => {
 
     expect(global.fetch).toBeCalledTimes(1)
     expect(mockFn).toBeCalledTimes(1)
-    done()
   })
 
-  it("createWriteStream can customize payload using callback", async (done) => {
+  it("createWriteStream can customize payload using callback", async () => {
     const mockFn = jest.fn().mockImplementation((item, meta) => {
       return { some: "overwritten" }
     })
@@ -102,10 +108,9 @@ describe("main", () => {
     const body = global.fetch.mock.calls[0][1]["body"]
     const decoded = JSON.parse(body)
     expect(decoded["batch"][0]).toStrictEqual({ some: "overwritten" })
-    done()
   })
 
-  it("correctly logs metadata for child loggers", async (done) => {
+  it("correctly logs metadata for child loggers", async () => {
     const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
@@ -117,7 +122,7 @@ describe("main", () => {
 
     childLogger.info(
       { structuredData: "value1", nestedStructed: { field: "value2" } },
-      "comment"
+      "comment",
     )
 
     const [[mockCall]] = mockStdout.mock.calls
@@ -133,7 +138,5 @@ describe("main", () => {
       },
       message: "comment",
     })
-
-    done()
   })
 })

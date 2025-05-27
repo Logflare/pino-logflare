@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
-const program = require('commander')
-
-const pkg = require('../package.json')
-const pinoLogflare = require('./index')
+const program = require("commander")
+const pkg = require("../package.json")
+const pino = require("pino")
+const pinoLogflare = require("./index")
 
 // main cli logic
 function main() {
   program
     .version(pkg.version)
-    .option('-k, --key <key>', 'Logflare API Key')
-    .option('-s, --source <source>', 'Default source for the logs')
-    .option('-u, --url <url>', 'Logflare API URL (optional)')
+    .option("-k, --key <key>", "Logflare API Key")
+    .option("-s, --source <source>", "Default source for the logs")
+    .option("-u, --url <url>", "Logflare API URL (optional)")
     .action(async (options: Record<string, string>) => {
       try {
         const config = {
