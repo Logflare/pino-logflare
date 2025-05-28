@@ -1,6 +1,6 @@
 # pino-logflare
 
-A transport for Pino +v7 that sends messages to Logflare.
+A transport for [Pino](https://getpino.io/#/) that sends messages to Logflare.
 
 ## Features
 
@@ -26,15 +26,14 @@ Pino +v7 compatible transport.
 
 ```javascript
 const pino = require("pino")
-const pinoLogflare = require("pino-logflare")
-
-const logger = pino({
-  transport: pinoLogflare({
+const transport = pino.transport({
+  target: "pino-logflare",
+  options: {
     apiKey: "your-api-key",
     sourceToken: "your-source-token",
-    apiBaseUrl: "https://api.logflare.app", // optional, defaults to Logflare's API
-  }),
+  },
 })
+const logger = pino(transport)
 
 logger.info("Hello Logflare!")
 ```
