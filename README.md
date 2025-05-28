@@ -106,18 +106,18 @@ const send = createPinoBrowserSend({
 
 ### Library Configuration Options
 
-| Option             | Type                 | Description                                            |
-| ------------------ | -------------------- | ------------------------------------------------------ |
-| `apiKey`           | Required, `string`   | Your Logflare API key                                  |
-| `sourceToken`      | Required, `string`   | Your Logflare source token                             |
-| `apiBaseUrl`       | Optional, `string`   | Custom API endpoint (defaults to Logflare's API)       |
-| `size`             | Optional, `number`   | Number of logs to batch before sending (defaults to 1) |
-| `onPreparePayload` | Optional, `callback` | Function to transform log payloads before sending      |
-| `onError`          | Optional, `callback` | Function to handle network errors                      |
-| `batchSize`        | Optional, `number`   | Number of logs to batch before sending (defaults to 100) |
+| Option             | Type                 | Description                                                                  |
+| ------------------ | -------------------- | ---------------------------------------------------------------------------- |
+| `apiKey`           | Required, `string`   | Your Logflare API key                                                        |
+| `sourceToken`      | Required, `string`   | Your Logflare source token                                                   |
+| `apiBaseUrl`       | Optional, `string`   | Custom API endpoint (defaults to Logflare's API)                             |
+| `size`             | Optional, `number`   | Number of logs to batch before sending (defaults to 1)                       |
+| `onPreparePayload` | Optional, `callback` | Function to transform log payloads before sending                            |
+| `onError`          | Optional, `callback` | Function to handle network errors                                            |
+| `batchSize`        | Optional, `number`   | Number of logs to batch before sending (defaults to 100)                     |
 | `batchTimeout`     | Optional, `number`   | Time in milliseconds to wait before sending partial batch (defaults to 1000) |
 
-
+**Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
 
 ### ⚠️ Deprecated Options
 
