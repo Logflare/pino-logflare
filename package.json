@@ -35,13 +35,6 @@
     "type": "git",
     "url": "git+https://github.com/logflare/pino-logflare.git"
   },
-  "engines": {
-    "node": ">=10.2.0"
-  },
-  "precommit": [
-    "lint",
-    "test"
-  ],
   "devDependencies": {
     "@babel/core": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
@@ -84,7 +77,6 @@
     "url": "https://github.com/logflare/pino-logflare/issues"
   },
   "directories": {
-    "doc": "docs",
     "test": "test"
   }
 }
