@@ -17,7 +17,11 @@ import {
   LogflareUserOptionsI,
 } from "logflare-transport-core"
 
-interface LogflareTransportOptions extends Pick<LogflareUserOptionsI, "apiKey" | "sourceToken" | "apiBaseUrl" | "onError"> {
+interface LogflareTransportOptions
+  extends Pick<
+    LogflareUserOptionsI,
+    "apiKey" | "sourceToken" | "apiBaseUrl" | "onError"
+  > {
   batchSize?: number
   batchTimeout?: number // timeout in ms before sending batch
 }
@@ -27,7 +31,6 @@ interface BatchInstance {
   addEvent: (event: any) => Promise<void>
   close: () => Promise<void>
 }
-
 
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
   const client = new LogflareHttpClient({ ...options, fromBrowser: true })
