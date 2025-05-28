@@ -12,11 +12,11 @@ describe("Console stream", () => {
   it("streams correctly", () => {
     const stream = consoleStream()
     stream.write(
-      JSON.stringify({ id: 1, name: `item first`, time: 1594310416073 })
+      JSON.stringify({ id: 1, name: `item first`, time: 1594310416073 }),
     )
 
     expect(mockStdout).toHaveBeenCalledWith(
-      '{"metadata":{"id":1,"name":"item first","context":{},"level":"info"},"message":"info","timestamp":1594310416073}\n'
+      '{"metadata":{"id":1,"name":"item first","context":{},"level":"info"},"message":"info","timestamp":1594310416073}\n',
     )
   })
 })

@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
   formatPinoBrowserLogEvent,
   addLogflareTransformDirectives,
@@ -7,7 +10,7 @@ import {
 } from "./utils"
 
 describe("utils", () => {
-  it("correctly formats pino browser log event", async (done) => {
+  it("correctly formats pino browser log event", async () => {
     const pinoBrowserLogEvent = {
       ts: 1593372837388,
       messages: ["a message", "from pino", "logger"],
@@ -33,10 +36,9 @@ describe("utils", () => {
       log_entry: "a message from pino logger",
       timestamp: 1593372837388,
     })
-    done()
   })
 
-  it("correctly logs metadata for string and object messages", async (done) => {
+  it("correctly logs metadata for string and object messages", async () => {
     const pinoBrowserLogEvent = {
       ts: 1593372837388,
       messages: [{ c: 3 }, "a message", "from pino logger", { b: 2 }],
@@ -57,10 +59,9 @@ describe("utils", () => {
       log_entry: "a message from pino logger",
       timestamp: 1593372837388,
     })
-    done()
   })
 
-  it("correctly adds logflare transform directives", async (done) => {
+  it("correctly adds logflare transform directives", async () => {
     const options = {
       transforms: {
         numbersToFloats: true,
@@ -95,7 +96,6 @@ describe("utils", () => {
         numbersToFloats: true,
       },
     })
-    done()
   })
 
   describe("handlePreparePayload", () => {

@@ -1,11 +1,26 @@
-import { logflarePinoVercel, createWriteStream } from "./index"
+import pinoLogflare, {
+  createBatchInstance,
+  logflarePinoVercel,
+  createWriteStream,
+} from "./index"
 import pino from "pino"
 import Pumpify from "pumpify"
 import { mockProcessStdout } from "jest-mock-process"
 import os from "os"
+import { Transform } from "stream"
+
+describe("pinoLogflare", () => {
+  it("is a Transform stream", async () => {
+    const stream = await pinoLogflare({
+      apiKey: "testApiKey",
+      sourceToken: "testSourceToken",
+    })
+    expect(stream).toBeInstanceOf(Transform)
+  })
+})
 
 describe("main", () => {
-  it("logflarePinoVercel creates correct stream and transmit objects", async (done) => {
+  it("logflarePinoVercel creates correct stream and transmit objects", async () => {
     const { stream, send } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
@@ -13,17 +28,15 @@ describe("main", () => {
 
     expect(stream.write).toBeInstanceOf(Function)
     expect(send).toBeInstanceOf(Function)
-    done()
   })
 
-  it("creates a writable http stream", async (done) => {
+  it("creates a writable http stream", async () => {
     const writeStream = createWriteStream({
       apiBaseUrl: "http://localhost:4000/",
       apiKey: "test-key",
       sourceToken: "test-token",
     })
     expect(writeStream).toBeInstanceOf(Pumpify)
-    done()
   })
 })
 
@@ -34,8 +47,8 @@ describe("main", () => {
     mockStdout = mockProcessStdout()
   })
 
-  it("correctly logs metadata for logger", async (done) => {
-    const { stream, send } = logflarePinoVercel({
+  it("correctly logs metadata for logger", async () => {
+    const { stream } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
     })
@@ -44,7 +57,7 @@ describe("main", () => {
 
     logger.info(
       { structuredData: "value1", nestedStructed: { field: "value2" } },
-      "comment"
+      "comment",
     )
 
     const [[mockCall]] = mockStdout.mock.calls
@@ -59,11 +72,9 @@ describe("main", () => {
       },
       message: "comment",
     })
-
-    done()
   })
 
-  it("createWriteStream correctly calls onError callbacks", async (done) => {
+  it("createWriteStream correctly calls onError callbacks", async () => {
     const mockFn = jest.fn()
     const stream = createWriteStream({
       apiKey: "testApiKey",
@@ -79,11 +90,10 @@ describe("main", () => {
 
     expect(global.fetch).toBeCalledTimes(1)
     expect(mockFn).toBeCalledTimes(1)
-    done()
   })
 
-  it("createWriteStream can customize payload using callback", async (done) => {
-    const mockFn = jest.fn().mockImplementation((item, meta) => {
+  it("createWriteStream can customize payload using callback", async () => {
+    const mockFn = jest.fn().mockImplementation(() => {
       return { some: "overwritten" }
     })
     const stream = createWriteStream({
@@ -102,11 +112,10 @@ describe("main", () => {
     const body = global.fetch.mock.calls[0][1]["body"]
     const decoded = JSON.parse(body)
     expect(decoded["batch"][0]).toStrictEqual({ some: "overwritten" })
-    done()
   })
 
-  it("correctly logs metadata for child loggers", async (done) => {
-    const { stream, send } = logflarePinoVercel({
+  it("correctly logs metadata for child loggers", async () => {
+    const { stream } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
     })
@@ -117,7 +126,7 @@ describe("main", () => {
 
     childLogger.info(
       { structuredData: "value1", nestedStructed: { field: "value2" } },
-      "comment"
+      "comment",
     )
 
     const [[mockCall]] = mockStdout.mock.calls
@@ -133,7 +142,66 @@ describe("main", () => {
       },
       message: "comment",
     })
+  })
+})
 
-    done()
+describe("batch instance", () => {
+  let mockClient
+  let batchInstance
+
+  beforeEach(() => {
+    mockClient = {
+      postLogEvents: jest.fn().mockResolvedValue(undefined),
+    }
+    batchInstance = createBatchInstance(
+      {
+        batchSize: 2,
+        batchTimeout: 100,
+      },
+      mockClient,
+    )
+  })
+
+  it("sends batch when size limit is reached", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+    await batchInstance.addEvent({ msg: "test2" })
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+    expect(mockClient.postLogEvents).toHaveBeenCalledWith([
+      expect.objectContaining({ message: "test1" }),
+      expect.objectContaining({ message: "test2" }),
+    ])
+  })
+
+  it("sends batch after timeout", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+
+    // Wait for timeout
+    await new Promise((resolve) => setTimeout(resolve, 150))
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+    expect(mockClient.postLogEvents).toHaveBeenCalledWith([
+      expect.objectContaining({ message: "test1" }),
+    ])
+  })
+
+  it("clears timeout when batch is sent", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+    await batchInstance.addEvent({ msg: "test2" })
+
+    // Wait for timeout
+    await new Promise((resolve) => setTimeout(resolve, 150))
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+  })
+
+  it("sends remaining events on close", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+    await batchInstance.close()
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+    expect(mockClient.postLogEvents).toHaveBeenCalledWith([
+      expect.objectContaining({ message: "test1" }),
+    ])
   })
 })

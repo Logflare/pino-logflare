@@ -8,9 +8,9 @@ const createConsoleWriteStream = (options: Options) => {
       const batch = Array.isArray(chunk) ? chunk : [chunk]
       batch
         .map((chunkItem) => JSON.parse(chunkItem))
-        .map(item=> handlePreparePayload(item, options))
+        .map((item) => handlePreparePayload(item, options))
         .map((logEntry: Record<string, any>) =>
-          addLogflareTransformDirectives(logEntry, options)
+          addLogflareTransformDirectives(logEntry, options),
         )
         .map((chunkItem) => JSON.stringify(chunkItem))
         .forEach((x) => {
