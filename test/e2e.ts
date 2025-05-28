@@ -18,7 +18,8 @@ interface LogData {
 const config = {
   apiKey: "test-api-key",
   sourceToken: "test-source-token",
-  size: 100,
+  batchSize: 15,
+  batchTimeout: 3000,
   apiBaseUrl: "http://localhost:4000",
 }
 

@@ -114,6 +114,10 @@ const send = createPinoBrowserSend({
 | `size`             | Optional, `number`   | Number of logs to batch before sending (defaults to 1) |
 | `onPreparePayload` | Optional, `callback` | Function to transform log payloads before sending      |
 | `onError`          | Optional, `callback` | Function to handle network errors                      |
+| `batchSize`        | Optional, `number`   | Number of logs to batch before sending (defaults to 100) |
+| `batchTimeout`     | Optional, `number`   | Time in milliseconds to wait before sending partial batch (defaults to 1000) |
+
+
 
 ### ⚠️ Deprecated Options
 

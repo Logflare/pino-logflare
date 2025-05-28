@@ -53,7 +53,7 @@ const createBatchInstance = (
   options: LogflareTransportOptions,
   client: LogflareHttpClient,
 ): BatchInstance => {
-  const { batchSize = 1, batchTimeout = 1000 } = options
+  const { batchSize = 100, batchTimeout = 1000 } = options
   let batch: any[] = []
   let timeoutId: NodeJS.Timeout | null = null
 
