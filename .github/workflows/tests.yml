@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x]
+        command: ["check:format", "lint", "test", "build"]
 
     steps:
       - uses: actions/checkout@v2
@@ -19,6 +20,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: "https://registry.npmjs.org"
-      - run: yarn
-      - run: yarn test
-      - run: yarn build
+      - run: npm ci
+      - name: Run ${{ matrix.command }}
+        run: npm run ${{ matrix.command }}

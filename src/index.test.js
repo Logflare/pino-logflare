@@ -48,7 +48,7 @@ describe("main", () => {
   })
 
   it("correctly logs metadata for logger", async () => {
-    const { stream, send } = logflarePinoVercel({
+    const { stream } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
     })
@@ -93,7 +93,7 @@ describe("main", () => {
   })
 
   it("createWriteStream can customize payload using callback", async () => {
-    const mockFn = jest.fn().mockImplementation((item, meta) => {
+    const mockFn = jest.fn().mockImplementation(() => {
       return { some: "overwritten" }
     })
     const stream = createWriteStream({
@@ -115,7 +115,7 @@ describe("main", () => {
   })
 
   it("correctly logs metadata for child loggers", async () => {
-    const { stream, send } = logflarePinoVercel({
+    const { stream } = logflarePinoVercel({
       apiKey: "testApiKey",
       sourceToken: "testSourceToken",
     })

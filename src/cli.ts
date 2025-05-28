@@ -2,7 +2,6 @@
 
 const program = require("commander")
 const pkg = require("../package.json")
-const pino = require("pino")
 const pinoLogflare = require("./index")
 
 // main cli logic

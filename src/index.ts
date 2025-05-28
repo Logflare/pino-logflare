@@ -28,13 +28,6 @@ interface BatchInstance {
   close: () => Promise<void>
 }
 
-const isBrowser =
-  typeof window !== "undefined" && typeof window.document !== "undefined"
-
-const isNode =
-  typeof process !== "undefined" &&
-  process.versions != null &&
-  process.versions.node != null
 
 const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
   const client = new LogflareHttpClient({ ...options, fromBrowser: true })

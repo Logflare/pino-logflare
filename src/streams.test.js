@@ -26,7 +26,7 @@ describe("streams", () => {
   it("does not stream invalid json", (done) => {
     const writeStream = parseJsonStream()
     writeStream
-      .on("data", (chunk) => {
+      .on("data", () => {
         t.fail("Should not be here")
       })
       .on("end", () => {})
