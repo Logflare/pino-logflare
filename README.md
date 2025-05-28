@@ -8,7 +8,7 @@ A transport for [Pino](https://getpino.io/#/) that sends messages to Logflare.
 - Automatic batching of logs
 - Custom payload transformation
 - Vercel Edge Runtime support
-- Error handling and retries
+- Error handling
 - TypeScript support
 
 > [!NOTE]  
