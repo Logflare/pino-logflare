@@ -17,8 +17,15 @@ import {
   LogflareUserOptionsI,
 } from "logflare-transport-core"
 
-interface LogflareTransportOptions extends LogflareUserOptionsI {
-  size?: number
+interface LogflareTransportOptions extends Pick<LogflareUserOptionsI, "apiKey" | "sourceToken" | "apiBaseUrl" | "onError"> {
+  batchSize?: number
+  batchTimeout?: number // timeout in ms before sending batch
+}
+
+interface BatchInstance {
+  sendBatch: () => Promise<void>
+  addEvent: (event: any) => Promise<void>
+  close: () => Promise<void>
 }
 
 const isBrowser =
@@ -49,36 +56,56 @@ const logflarePinoVercel = (options: LogflareUserOptionsI) => {
   }
 }
 
+const createBatchInstance = (
+  options: LogflareTransportOptions,
+  client: LogflareHttpClient,
+): BatchInstance => {
+  const { batchSize = 1, batchTimeout = 1000 } = options
+  let batch: any[] = []
+  let timeoutId: NodeJS.Timeout | null = null
+
+  const sendBatch = async () => {
+    if (batch.length > 0) {
+      await client.postLogEvents(batch)
+      batch = []
+    }
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      timeoutId = null
+    }
+  }
+
+  const addEvent = async (event: any) => {
+    const preparedEvents = handlePreparePayload(event, options)
+    batch.push(preparedEvents)
+
+    if (batch.length >= batchSize) {
+      await sendBatch()
+    } else if (!timeoutId) {
+      timeoutId = setTimeout(sendBatch, batchTimeout)
+    }
+  }
+
+  return {
+    sendBatch,
+    addEvent,
+    close: sendBatch,
+  }
+}
+
 export default async function (options: LogflareTransportOptions) {
   const client = new LogflareHttpClient(options)
-  const { size = 1 } = options
-  let batch: any[] = []
+  const batchInstance = createBatchInstance(options, client)
 
   return build(
     async function (newEvents) {
       for await (const event of newEvents) {
-        const preparedEvents = handlePreparePayload(event, options)
-        batch.push(preparedEvents)
-
-        if (batch.length >= size) {
-          await client.postLogEvents(batch)
-          batch = []
-        }
+        await batchInstance.addEvent(event)
       }
-
-      // Send any remaining logs
-      if (batch.length > 0) {
-        await client.postLogEvents(batch)
-      }
+      await batchInstance.sendBatch()
     },
     {
-      // Add stream options to properly handle stdin
-      close: async () => {
-        // Handle cleanup if needed
-        if (batch.length > 0) {
-          await client.postLogEvents(batch)
-        }
-      },
+      close: batchInstance.close,
     },
   )
 }
@@ -89,4 +116,5 @@ export {
   createWriteStream,
   defaultPreparePayload,
   extractPayloadMeta,
+  createBatchInstance,
 }

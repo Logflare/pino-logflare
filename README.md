@@ -115,6 +115,16 @@ const send = createPinoBrowserSend({
 | `onPreparePayload` | Optional, `callback` | Function to transform log payloads before sending      |
 | `onError`          | Optional, `callback` | Function to handle network errors                      |
 
+### ⚠️ Deprecated Options
+
+The following options are deprecated and will be removed in a future version:
+
+| Option        | Status         | Migration                                               |
+| ------------- | -------------- | ------------------------------------------------------- |
+| `transforms`  | **Deprecated** | Server-side transforms are no longer supported.         |
+| `endpoint`    | **Deprecated** | Use `apiBaseUrl` instead                                |
+| `fromBrowser` | **Deprecated** | This option is no longer necessary for the HTTP Client. |
+
 ## CLI
 
 ```bash

@@ -1,4 +1,8 @@
-import pinoLogflare, { logflarePinoVercel, createWriteStream } from "./index"
+import pinoLogflare, {
+  createBatchInstance,
+  logflarePinoVercel,
+  createWriteStream,
+} from "./index"
 import pino from "pino"
 import Pumpify from "pumpify"
 import { mockProcessStdout } from "jest-mock-process"
@@ -138,5 +142,66 @@ describe("main", () => {
       },
       message: "comment",
     })
+  })
+})
+
+describe("batch instance", () => {
+  let mockClient
+  let batchInstance
+
+  beforeEach(() => {
+    mockClient = {
+      postLogEvents: jest.fn().mockResolvedValue(undefined),
+    }
+    batchInstance = createBatchInstance(
+      {
+        batchSize: 2,
+        batchTimeout: 100,
+      },
+      mockClient,
+    )
+  })
+
+  it("sends batch when size limit is reached", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+    await batchInstance.addEvent({ msg: "test2" })
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+    expect(mockClient.postLogEvents).toHaveBeenCalledWith([
+      expect.objectContaining({ message: "test1" }),
+      expect.objectContaining({ message: "test2" }),
+    ])
+  })
+
+  it("sends batch after timeout", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+
+    // Wait for timeout
+    await new Promise((resolve) => setTimeout(resolve, 150))
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+    expect(mockClient.postLogEvents).toHaveBeenCalledWith([
+      expect.objectContaining({ message: "test1" }),
+    ])
+  })
+
+  it("clears timeout when batch is sent", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+    await batchInstance.addEvent({ msg: "test2" })
+
+    // Wait for timeout
+    await new Promise((resolve) => setTimeout(resolve, 150))
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+  })
+
+  it("sends remaining events on close", async () => {
+    await batchInstance.addEvent({ msg: "test1" })
+    await batchInstance.close()
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledTimes(1)
+    expect(mockClient.postLogEvents).toHaveBeenCalledWith([
+      expect.objectContaining({ message: "test1" }),
+    ])
   })
 })
