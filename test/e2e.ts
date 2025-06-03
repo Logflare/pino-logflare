@@ -18,9 +18,14 @@ interface LogData {
 const config = {
   apiKey: "test-api-key",
   sourceToken: "test-source-token",
-  batchSize: 15,
-  batchTimeout: 3000,
+  batchSize: 50,
+  batchTimeout: 1000,
   apiBaseUrl: "http://localhost:4000",
+  onPreparePayload: {
+    module: "../dist/utils",
+    method: "handleLogPreparePayload",
+  },
+  onError: { module: "../dist/utils", method: "handleError" },
 }
 
 // Create logger with Logflare transport
@@ -34,7 +39,10 @@ const transport = pino.transport({
   ] as any,
 })
 
-const logger = pino(transport)
+const baseLogger = pino(transport)
+const logger = baseLogger.child({
+  test: "e2e",
+})
 
 // Test data generators
 const generateRandomString = (length: number): string => {

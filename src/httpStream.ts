@@ -1,7 +1,4 @@
-import {
-  LogflareHttpClient,
-  LogflareUserOptionsI,
-} from "logflare-transport-core"
+import { HttpClient, HttpClientOptions } from "logflare-transport-core"
 import * as streams from "./streams"
 import stream from "stream"
 const pumpify = require("pumpify")
@@ -23,7 +20,7 @@ export type PreparePayloadCallback = (
   payload: Record<string, any>,
   meta: PayloadMeta,
 ) => Record<string, any>
-export interface Options extends LogflareUserOptionsI {
+export interface Options extends HttpClientOptions {
   size?: number
   onPreparePayload?: PreparePayloadCallback
 }
@@ -34,7 +31,7 @@ function createWriteStream(options: Options) {
   const parseJsonStream = streams.parseJsonStream()
   const toLogEntryStream = streams.toLogEntryStream(options)
   const batchStream = streams.batchStream(size)
-  const writeStream = createClientStream(new LogflareHttpClient(options))
+  const writeStream = createClientStream(new HttpClient(options))
 
   return pumpify(parseJsonStream, toLogEntryStream, batchStream, writeStream)
 }
@@ -45,14 +42,14 @@ function createWriteStream(options: Options) {
  * - https://github.com/atdrago/logflare-transport-core-js/commit/4aad9030aca1c9ea6c241d4e6ebfc0da76eaea8f
  * - https://github.com/Logflare/pino-logflare/issues/41
  */
-function createClientStream(client: LogflareHttpClient) {
+function createClientStream(client: HttpClient) {
   const writeStream = new stream.Writable({
     objectMode: true,
     highWaterMark: 1,
   })
   writeStream._write = function (chunk, _encoding, callback) {
     client
-      .addLogEvent(chunk)
+      .postLogEvents(chunk)
       .then(() => {
         callback(null)
       })

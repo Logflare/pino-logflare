@@ -1,4 +1,4 @@
-import { addLogflareTransformDirectives, handlePreparePayload } from "./utils"
+import { handlePreparePayload } from "./utils"
 import batch2 from "batch2"
 import split2 from "split2"
 import through2 from "through2"
@@ -20,8 +20,7 @@ function parseJsonStream() {
 function toLogEntryStream(options: Options) {
   return through2.obj((chunk, enc, cb) => {
     const entry = handlePreparePayload(chunk, options)
-    const maybeWithTransforms = addLogflareTransformDirectives(entry, options)
-    cb(null, maybeWithTransforms)
+    cb(null, entry)
   })
 }
 
