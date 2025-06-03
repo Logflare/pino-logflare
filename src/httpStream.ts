@@ -49,7 +49,7 @@ function createClientStream(client: HttpClient) {
   })
   writeStream._write = function (chunk, _encoding, callback) {
     client
-      .postLogEvents([chunk])
+      .postLogEvents(chunk)
       .then(() => {
         callback(null)
       })
