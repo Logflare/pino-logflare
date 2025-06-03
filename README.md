@@ -31,12 +31,72 @@ const transport = pino.transport({
   options: {
     apiKey: "your-api-key",
     sourceToken: "your-source-token",
+    // either sourceToken or sourceName can be provided. sourceToken takes precedence.
+    // sourceName: "my.source.name",
+    // handle errors on the client side
+    onError: { module: "my_utils", method: "handleErrors" },
+    // transform events before sending
+    onPreparePayload: { module: "my_utils", method: "handlePayload" },
   },
 })
 const logger = pino(transport)
 
 logger.info("Hello Logflare!")
 ```
+
+### Handle Errors
+
+Create a separate module that contains the exported function. Error information, usually an `Error` instance, is received as the second argument.
+
+```js
+// my_utils.js
+export const handleErrors = (events, error) => {...}
+```
+
+Provide the target module and method to be used for the `handleErrors` option.
+
+```js
+// my_logger.js
+const pino = require("pino")
+
+const transport = pino.transport({
+  target: "pino-logflare",
+  options: {
+    ...,
+    onError: {module: "my_utils", method: "handleErrors"},
+  },
+})
+const logger = pino(transport)
+```
+
+The method will be dynamically imported on the worker thread.
+
+### Transforming Events
+
+Create a separate module that contains the exported function. Payload metadata is received as the 2nd argument.
+
+```js
+// my_utils.js
+export const handlePayload = (events, meta) => {...}
+```
+
+Provide the target module and method to be used for the `onPreparePayload` option.
+
+```js
+// my_logger.js
+const pino = require("pino")
+
+const transport = pino.transport({
+  target: "pino-logflare",
+  options: {
+    ...,
+    onPreparePayload: {module: "my_utils", method: "handlePayload"},
+  },
+})
+const logger = pino(transport)
+```
+
+The method will be dynamically imported on the worker thread.
 
 ## Package Functions
 
@@ -105,18 +165,21 @@ const send = createPinoBrowserSend({
 
 ### Library Configuration Options
 
-| Option             | Type                 | Description                                                                   |
-| ------------------ | -------------------- | ----------------------------------------------------------------------------- |
-| `apiKey`           | Required, `string`   | Your Logflare API key                                                         |
-| `sourceToken`      | Required, `string`   | Your Logflare source token                                                    |
-| `apiBaseUrl`       | Optional, `string`   | Custom API endpoint (defaults to Logflare's API)                              |
-| `size`             | Optional, `number`   | Number of logs to batch before sending (defaults to 1)                        |
-| `onPreparePayload` | Optional, `callback` | Function to transform log payloads before sending                             |
-| `onError`          | Optional, `Object`   | Object with a `module` and `method` to be invoked on the worker thread.errors |
-| `batchSize`        | Optional, `number`   | Number of logs to batch before sending (defaults to 100)                      |
-| `batchTimeout`     | Optional, `number`   | Time in milliseconds to wait before sending partial batch (defaults to 1000)  |
+| Option             | Type                | Description                                                                                                                                                                                                                |
+| ------------------ | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apiKey`           | Required, `string`  | Your Logflare API key                                                                                                                                                                                                      |
+| `sourceToken`      | Required, `string`  | Your Logflare source token                                                                                                                                                                                                 |
+| `apiBaseUrl`       | Optional, `string`  | Custom API endpoint (defaults to Logflare's API)                                                                                                                                                                           |
+| `size`             | Optional, `number`  | Number of logs to batch before sending (defaults to 1)                                                                                                                                                                     |
+| `onPreparePayload` | Optional, `Object`  | Object with a `module` and `method` to be invoked on the worker thread. The method should transform events prior to sending. <br />Receives the events as the first arg and the payload metadata as the second arg         |
+| `onError`          | Optional, `Object`  | Object with a `module` and `method` to be invoked on the worker thread. This method is invoked on errors when sending events to the given API. <br />Receives the events as the first arg and the error as the second arg. |
+| `batchSize`        | Optional, `number`  | Number of logs to batch before sending (defaults to 100)                                                                                                                                                                   |
+| `batchTimeout`     | Optional, `number`  | Time in milliseconds to wait before sending partial batch (defaults to 1000)                                                                                                                                               |
+| `debug`            | Optional, `boolean` | Turns on debug console logs on the base HTTP client.                                                                                                                                                                       |
 
 **Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
+
+**Note:** `onPreparePayload` and `onError` options only accept callbacks for up to Pino v6 with legacy API. This is deprecated, please migrate to dynamic import based callbacks.
 
 ### ⚠️ Deprecated Options
 
