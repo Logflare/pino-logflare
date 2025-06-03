@@ -105,18 +105,20 @@ const send = createPinoBrowserSend({
 
 ### Library Configuration Options
 
-| Option             | Type                 | Description                                                                   |
-| ------------------ | -------------------- | ----------------------------------------------------------------------------- |
-| `apiKey`           | Required, `string`   | Your Logflare API key                                                         |
-| `sourceToken`      | Required, `string`   | Your Logflare source token                                                    |
-| `apiBaseUrl`       | Optional, `string`   | Custom API endpoint (defaults to Logflare's API)                              |
-| `size`             | Optional, `number`   | Number of logs to batch before sending (defaults to 1)                        |
-| `onPreparePayload` | Optional, `callback` | Function to transform log payloads before sending                             |
-| `onError`          | Optional, `Object`   | Object with a `module` and `method` to be invoked on the worker thread.errors |
-| `batchSize`        | Optional, `number`   | Number of logs to batch before sending (defaults to 100)                      |
-| `batchTimeout`     | Optional, `number`   | Time in milliseconds to wait before sending partial batch (defaults to 1000)  |
+| Option             | Type               | Description                                                                                                                                    |
+| ------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apiKey`           | Required, `string` | Your Logflare API key                                                                                                                          |
+| `sourceToken`      | Required, `string` | Your Logflare source token                                                                                                                     |
+| `apiBaseUrl`       | Optional, `string` | Custom API endpoint (defaults to Logflare's API)                                                                                               |
+| `size`             | Optional, `number` | Number of logs to batch before sending (defaults to 1)                                                                                         |
+| `onPreparePayload` | Optional, `Object` | Object with a `module` and `method` to be invoked on the worker thread. The method should transform events prior to sending.                   |
+| `onError`          | Optional, `Object` | Object with a `module` and `method` to be invoked on the worker thread. This method is invoked on errors when sending events to the given API. |
+| `batchSize`        | Optional, `number` | Number of logs to batch before sending (defaults to 100)                                                                                       |
+| `batchTimeout`     | Optional, `number` | Time in milliseconds to wait before sending partial batch (defaults to 1000)                                                                   |
 
 **Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
+
+**Note:** `onPreparePayload` and `onError` options only accept callbacks for up to Pino v6 with legacy API. This is deprecated, please migrate to dynamic import based callbacks.
 
 ### ⚠️ Deprecated Options
 
