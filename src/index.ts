@@ -6,24 +6,14 @@ import {
   extractPayloadMeta,
   handlePreparePayload,
 } from "./utils"
-import {
-  Level,
-  LogEvent,
-  formatPinoBrowserLogEvent,
-  addLogflareTransformDirectives,
-} from "./utils"
-import {
-  LogflareHttpClient,
-  LogflareUserOptionsI,
-} from "logflare-transport-core"
+import { Level, LogEvent, formatPinoBrowserLogEvent } from "./utils"
+import { HttpClient, HttpClientOptions } from "logflare-transport-core"
 
-interface LogflareTransportOptions
-  extends Pick<
-    LogflareUserOptionsI,
-    "apiKey" | "sourceToken" | "apiBaseUrl" | "onError"
-  > {
+interface LogflareTransportOptions extends HttpClientOptions {
   batchSize?: number
   batchTimeout?: number // timeout in ms before sending batch
+  onError?: any
+  onPreparePayload?: any
 }
 
 interface BatchInstance {
@@ -32,20 +22,16 @@ interface BatchInstance {
   close: () => Promise<void>
 }
 
-const createPinoBrowserSend = (options: LogflareUserOptionsI) => {
-  const client = new LogflareHttpClient({ ...options, fromBrowser: true })
+const createPinoBrowserSend = (options: HttpClientOptions) => {
+  const client = new HttpClient(options)
 
   return (level: Level | number, logEvent: LogEvent) => {
     const logflareLogEvent = formatPinoBrowserLogEvent(logEvent)
-    const maybeWithTransforms = addLogflareTransformDirectives(
-      logflareLogEvent,
-      options,
-    )
-    client.postLogEvents([maybeWithTransforms])
+    client.postLogEvents([logflareLogEvent])
   }
 }
 
-const logflarePinoVercel = (options: LogflareUserOptionsI) => {
+const logflarePinoVercel = (options: HttpClientOptions) => {
   return {
     stream: createConsoleWriteStream(options),
     send: createPinoBrowserSend(options),
@@ -54,7 +40,7 @@ const logflarePinoVercel = (options: LogflareUserOptionsI) => {
 
 const createBatchInstance = (
   options: LogflareTransportOptions,
-  client: LogflareHttpClient,
+  client: HttpClient,
 ): BatchInstance => {
   const { batchSize = 100, batchTimeout = 1000 } = options
   let batch: any[] = []
@@ -90,8 +76,17 @@ const createBatchInstance = (
 }
 
 export default async function (options: LogflareTransportOptions) {
-  const client = new LogflareHttpClient(options)
-  const batchInstance = createBatchInstance(options, client)
+  let clientOptions: LogflareTransportOptions = options
+  for (const cbName of ["onError", "onPreparePayload"]) {
+    const callbackTarget = options[cbName as keyof LogflareTransportOptions]
+    if (callbackTarget) {
+      const callback = await importCallback(cbName, callbackTarget)
+      clientOptions = { ...clientOptions, [cbName]: callback }
+    }
+  }
+
+  const client = new HttpClient(clientOptions)
+  const batchInstance = createBatchInstance(clientOptions, client)
 
   return build(
     async function (newEvents) {
@@ -104,6 +99,22 @@ export default async function (options: LogflareTransportOptions) {
       close: batchInstance.close,
     },
   )
+}
+
+const importCallback = async (
+  callbackName: string,
+  target: { module: string; method: string },
+) => {
+  const { module, method } = target
+  if (!module || !method) {
+    throw new Error(
+      `Callback ${callbackName} must be an object with module and method, to import the callback on the worker thread`,
+    )
+  }
+
+  const importedModule = await import(module)
+  const importedMethod = importedModule[method]
+  return importedMethod
 }
 
 export {

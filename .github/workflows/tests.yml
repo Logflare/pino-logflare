@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: ["master"]
     paths:
-      - 'src/**'
+      - "src/**"
 
 jobs:
   build:

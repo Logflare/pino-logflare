@@ -1,4 +1,4 @@
-import { LogflareUserOptionsI } from "logflare-transport-core"
+import { HttpClient, HttpClientOptions } from "logflare-transport-core"
 import { Options, PayloadMeta, PreparePayloadCallback } from "./httpStream"
 function isObject(value?: unknown): value is object {
   return typeof value === "object" && value !== null
@@ -107,20 +107,6 @@ function getDocumentUrl(): string | undefined {
   }
 }
 
-function addLogflareTransformDirectives(
-  item: Record<string, any>,
-  options: LogflareUserOptionsI,
-): Record<string, any> {
-  if (options?.transforms?.numbersToFloats) {
-    return {
-      ...item,
-      "@logflareTransformDirectives": { numbersToFloats: true },
-    }
-  } else {
-    return item
-  }
-}
-
 export const extractPayloadMeta = (item: Record<string, any>) => {
   const status = levelToStatus(item.level)
   const message = item.msg || status
@@ -175,10 +161,15 @@ const handlePreparePayload = (item: Record<string, any>, options: Options) => {
   return result
 }
 
-export {
-  handlePreparePayload,
-  formatPinoBrowserLogEvent,
-  Level,
-  LogEvent,
-  addLogflareTransformDirectives,
+export { handlePreparePayload, formatPinoBrowserLogEvent, Level, LogEvent }
+
+// for e2e testing
+export const handleError = (err: any) => {
+  console.error("Error sending log:", err)
+}
+
+// for e2e testing
+export const handleLogPreparePayload = (item: any, meta: any) => {
+  console.log("handleLogPreparePayload", item, meta)
+  return item
 }

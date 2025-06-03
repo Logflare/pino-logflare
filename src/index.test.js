@@ -205,3 +205,259 @@ describe("batch instance", () => {
     ])
   })
 })
+
+describe("dynamic callback imports", () => {
+  let mockClient
+  let originalImport
+
+  beforeEach(() => {
+    mockClient = {
+      postLogEvents: jest.fn().mockResolvedValue(undefined),
+    }
+    // Mock dynamic import
+    originalImport = global.import
+    global.import = jest.fn()
+  })
+
+  afterEach(() => {
+    global.import = originalImport
+    jest.clearAllMocks()
+  })
+
+  it("imports and uses onPreparePayload callback from module", async () => {
+    const mockPreparePayload = jest.fn().mockReturnValue({
+      transformed: true,
+      message: "transformed message",
+    })
+
+    global.import.mockResolvedValue({
+      customPreparePayload: mockPreparePayload,
+    })
+
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      onPreparePayload: {
+        module: "./test/utils",
+        method: "customPreparePayload",
+      },
+    }
+
+    const transport = await pinoLogflare(options)
+    expect(global.import).toHaveBeenCalledWith("./test/utils")
+    expect(transport).toBeInstanceOf(Transform)
+  })
+
+  it("imports and uses onError callback from module", async () => {
+    const mockErrorHandler = jest.fn()
+
+    global.import.mockResolvedValue({
+      customErrorHandler: mockErrorHandler,
+    })
+
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      onError: {
+        module: "./test/utils",
+        method: "customErrorHandler",
+      },
+    }
+
+    const transport = await pinoLogflare(options)
+    expect(global.import).toHaveBeenCalledWith("./test/utils")
+    expect(transport).toBeInstanceOf(Transform)
+  })
+
+  it("imports both onPreparePayload and onError callbacks", async () => {
+    const mockPreparePayload = jest.fn().mockReturnValue({ transformed: true })
+    const mockErrorHandler = jest.fn()
+
+    global.import
+      .mockResolvedValueOnce({
+        customErrorHandler: mockErrorHandler,
+      })
+      .mockResolvedValueOnce({
+        customPreparePayload: mockPreparePayload,
+      })
+
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      onError: {
+        module: "./test/utils",
+        method: "customErrorHandler",
+      },
+      onPreparePayload: {
+        module: "./test/utils",
+        method: "customPreparePayload",
+      },
+    }
+
+    const transport = await pinoLogflare(options)
+    expect(global.import).toHaveBeenCalledTimes(2)
+    expect(global.import).toHaveBeenCalledWith("./test/utils")
+    expect(transport).toBeInstanceOf(Transform)
+  })
+
+  it("throws error when callback module is missing", async () => {
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      onPreparePayload: {
+        method: "customPreparePayload",
+      },
+    }
+
+    await expect(pinoLogflare(options)).rejects.toThrow(
+      "Callback onPreparePayload must be an object with module and method",
+    )
+  })
+
+  it("throws error when callback method is missing", async () => {
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      onError: {
+        module: "./test/utils",
+      },
+    }
+
+    await expect(pinoLogflare(options)).rejects.toThrow(
+      "Callback onError must be an object with module and method",
+    )
+  })
+
+  it("throws error when module import fails", async () => {
+    global.import.mockRejectedValue(new Error("Module not found"))
+
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      onPreparePayload: {
+        module: "./non-existent-module",
+        method: "someMethod",
+      },
+    }
+
+    await expect(pinoLogflare(options)).rejects.toThrow("Module not found")
+  })
+
+  it("handles missing method in imported module", async () => {
+    global.import.mockResolvedValue({
+      someOtherMethod: jest.fn(),
+    })
+
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      onPreparePayload: {
+        module: "./test/utils",
+        method: "nonExistentMethod",
+      },
+    }
+
+    const transport = await pinoLogflare(options)
+    // Should still create transport, but callback will be undefined
+    expect(transport).toBeInstanceOf(Transform)
+  })
+})
+
+describe("batch instance with dynamic callbacks", () => {
+  let mockClient
+  let originalImport
+
+  beforeEach(() => {
+    mockClient = {
+      postLogEvents: jest.fn().mockResolvedValue(undefined),
+    }
+    originalImport = global.import
+    global.import = jest.fn()
+  })
+
+  afterEach(() => {
+    global.import = originalImport
+    jest.clearAllMocks()
+  })
+
+  it("uses imported onPreparePayload callback in batch processing", async () => {
+    const mockPreparePayload = jest.fn().mockImplementation((item, meta) => ({
+      transformedMessage: `Transformed: ${meta.message}`,
+      transformedLevel: meta.level,
+      originalItem: item,
+    }))
+
+    global.import.mockResolvedValue({
+      customPreparePayload: mockPreparePayload,
+    })
+
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      batchSize: 1,
+      onPreparePayload: {
+        module: "./test/utils",
+        method: "customPreparePayload",
+      },
+    }
+
+    const batchInstance = createBatchInstance(options, mockClient)
+    await batchInstance.addEvent({ msg: "test message", level: 30 })
+
+    expect(mockClient.postLogEvents).toHaveBeenCalledWith([
+      expect.objectContaining({
+        transformedMessage: "Transformed: test message",
+        transformedLevel: "info",
+      }),
+    ])
+  })
+
+  it("handles errors in imported onPreparePayload callback", async () => {
+    const mockPreparePayload = jest.fn().mockImplementation(() => {
+      throw new Error("Callback error")
+    })
+
+    global.import.mockResolvedValue({
+      throwingPreparePayload: mockPreparePayload,
+    })
+
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      batchSize: 1,
+      onPreparePayload: {
+        module: "./test/utils",
+        method: "throwingPreparePayload",
+      },
+    }
+
+    const batchInstance = createBatchInstance(options, mockClient)
+
+    // Should not throw, but handle gracefully
+    await expect(
+      batchInstance.addEvent({ msg: "test", level: 30 }),
+    ).rejects.toThrow("Callback error")
+  })
+})
+
+describe("integration with real callback modules", () => {
+  it("works with actual test utils module", async () => {
+    // This test uses real module imports to test the actual functionality
+    const options = {
+      apiKey: "test-api-key",
+      sourceToken: "test-source-token",
+      batchSize: 1,
+      onPreparePayload: {
+        module: "../test/utils",
+        method: "handleLogPreparePayload",
+      },
+      onError: {
+        module: "../test/utils",
+        method: "handleError",
+      },
+    }
+
+    const transport = await pinoLogflare(options)
+    expect(transport).toBeInstanceOf(Transform)
+  }, 10000) // Longer timeout for real module imports
+})
