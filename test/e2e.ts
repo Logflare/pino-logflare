@@ -21,10 +21,10 @@ const config = {
   batchSize: 50,
   batchTimeout: 1000,
   apiBaseUrl: "http://localhost:4000",
-  onPreparePayload: {
-    module: "../dist/utils",
-    method: "handleLogPreparePayload",
-  },
+  // onPreparePayload: {
+  //   module: "../dist/utils",
+  //   method: "handleLogPreparePayload",
+  // },
   onError: { module: "../dist/utils", method: "handleError" },
 }
 
@@ -118,7 +118,7 @@ const logInterval = setInterval(() => {
         break
     }
     counter++
-    console.log(`Sent ${logType.type} log #${counter}`)
+    // console.log(`Sent ${logType.type} log #${counter}`)
   } catch (err) {
     console.error("Error sending log:", err)
   }
