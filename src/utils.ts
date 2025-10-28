@@ -164,7 +164,7 @@ const handlePreparePayload = (item: Record<string, any>, options: Options) => {
 export { handlePreparePayload, formatPinoBrowserLogEvent, Level, LogEvent }
 
 // for e2e testing
-export const handleError = (err: any) => {
+export const handleError = (_payload: any, err: any) => {
   console.error("Error sending log:", err)
 }
 
