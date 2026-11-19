@@ -45,23 +45,30 @@ const createBatchInstance = (
   const { batchSize = 100, batchTimeout = 1000 } = options
   let batch: any[] = []
   let timeoutId: NodeJS.Timeout | null = null
+  // The most recent post. Each post starts after the previous one settles, so
+  // batches arrive in order and close() can wait for posts still in flight.
+  let inFlight: Promise<unknown> = Promise.resolve()
 
   /**
    * Takes the pending events and clears the timeout before posting, so a
    * timeout or close during an in-flight post can't send the same events again
-   * or drop events added while it runs.
+   * or drop events added while it runs. Resolves once every post started so
+   * far has settled.
    */
   const sendBatch = async () => {
     if (timeoutId) {
       clearTimeout(timeoutId)
       timeoutId = null
     }
-    if (batch.length === 0) {
-      return
+    if (batch.length > 0) {
+      const events = batch
+      batch = []
+      // A failed earlier post must not stop this one from being sent.
+      inFlight = inFlight
+        .catch(() => {})
+        .then(() => client.postLogEvents(events))
     }
-    const events = batch
-    batch = []
-    await client.postLogEvents(events)
+    await inFlight
   }
 
   const addEvent = async (event: any) => {

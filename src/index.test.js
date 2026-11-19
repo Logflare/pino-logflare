@@ -238,44 +238,73 @@ describe("batch instance while a send is in flight", () => {
   })
 
   // The first event arms the batch timeout; the second fills the batch and
-  // starts a send that has not finished yet.
-  const startFullBatchSend = () => {
+  // starts a send that has not finished yet. The pending send is returned in an
+  // object so awaiting this helper doesn't wait for the send itself.
+  const startFullBatchSend = async () => {
     batchInstance.addEvent({ msg: "test1" })
-    return batchInstance.addEvent({ msg: "test2" })
+    const fullBatchSend = batchInstance.addEvent({ msg: "test2" })
+    await flushMicrotasks()
+    return { fullBatchSend }
   }
 
   it("does not send a batch again when the timeout fires during its send", async () => {
-    startFullBatchSend()
+    const { fullBatchSend } = await startFullBatchSend()
 
     jest.advanceTimersByTime(100)
+    await flushMicrotasks()
 
     expect(posted).toEqual([["test1", "test2"]])
-  })
-
-  it("does not drop events added after an earlier send finishes", async () => {
-    const fullBatchSend = startFullBatchSend()
-    jest.advanceTimersByTime(100)
 
     resolvers[0]()
     await fullBatchSend
-    await batchInstance.addEvent({ msg: "test3" })
-
-    resolvers.slice(1).forEach((resolve) => resolve())
-    await flushMicrotasks()
-    jest.advanceTimersByTime(100)
-    resolvers.forEach((resolve) => resolve())
-    await batchInstance.close()
-
-    expect(posted.flat()).toEqual(["test1", "test2", "test3"])
   })
 
-  it("does not send a batch again when closed during its send", async () => {
-    startFullBatchSend()
+  it("does not drop events added after an earlier send finishes", async () => {
+    const { fullBatchSend } = await startFullBatchSend()
+    jest.advanceTimersByTime(100)
+    resolvers[0]()
+    await fullBatchSend
 
-    const closing = batchInstance.close()
-    resolvers.forEach((resolve) => resolve())
+    await batchInstance.addEvent({ msg: "test3" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+    resolvers[1]()
+    await batchInstance.close()
+
+    expect(posted).toEqual([["test1", "test2"], ["test3"]])
+  })
+
+  it("waits for the in-flight send when closed, without sending it again", async () => {
+    await startFullBatchSend()
+
+    let closed = false
+    const closing = batchInstance.close().then(() => {
+      closed = true
+    })
+    await flushMicrotasks()
+    expect(closed).toBe(false)
+
+    resolvers[0]()
     await closing
 
     expect(posted).toEqual([["test1", "test2"]])
+  })
+
+  it("starts a send only after the previous one finishes", async () => {
+    batchInstance.addEvent({ msg: "test1" })
+    jest.advanceTimersByTime(100)
+    batchInstance.addEvent({ msg: "test2" })
+    const fullBatchSend = batchInstance.addEvent({ msg: "test3" })
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"]])
+
+    resolvers[0]()
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"], ["test2", "test3"]])
+
+    resolvers[1]()
+    await fullBatchSend
   })
 })
