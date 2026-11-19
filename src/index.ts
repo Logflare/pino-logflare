@@ -46,22 +46,15 @@ const createBatchInstance = (
   let batch: any[] = []
   let timeoutId: NodeJS.Timeout | null = null
 
-  /**
-   * Takes the pending events and clears the timeout before posting, so a
-   * timeout or close during an in-flight post can't send the same events again
-   * or drop events added while it runs.
-   */
   const sendBatch = async () => {
+    if (batch.length > 0) {
+      await client.postLogEvents(batch)
+      batch = []
+    }
     if (timeoutId) {
       clearTimeout(timeoutId)
       timeoutId = null
     }
-    if (batch.length === 0) {
-      return
-    }
-    const events = batch
-    batch = []
-    await client.postLogEvents(events)
   }
 
   const addEvent = async (event: any) => {
