@@ -343,6 +343,37 @@ describe("batch instance while a send is in flight", () => {
     await second
   })
 
+  it("gives an event added after a waiting send its full timeout", async () => {
+    batchInstance.addEvent({ msg: "test1" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+
+    // test2 arms a timeout while the send waits for the first post.
+    const waitingSend = batchInstance.sendBatch()
+    batchInstance.addEvent({ msg: "test2" })
+    resolvers[0]()
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"], ["test2"]])
+
+    jest.advanceTimersByTime(60)
+    batchInstance.addEvent({ msg: "test3" })
+    resolvers[1]()
+    await waitingSend
+    jest.advanceTimersByTime(50)
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"], ["test2"]])
+
+    jest.advanceTimersByTime(50)
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"], ["test2"], ["test3"]])
+
+    resolvers[2]()
+    await batchInstance.close()
+  })
+
   it("starts a send only after the previous one finishes", async () => {
     batchInstance.addEvent({ msg: "test1" })
     jest.advanceTimersByTime(100)

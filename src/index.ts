@@ -87,6 +87,9 @@ const createBatchInstance = (
     if (batch.length === 0) {
       return
     }
+    // An event added while waiting may have armed a new timeout. These events
+    // are about to be sent, so it must not fire early for the next event.
+    clearBatchTimeout()
     const events = batch
     batch = []
     const sending = post(events)
