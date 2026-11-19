@@ -45,41 +45,78 @@ const createBatchInstance = (
   const { batchSize = 100, batchTimeout = 1000 } = options
   let batch: any[] = []
   let timeoutId: NodeJS.Timeout | null = null
-  // The most recent post. Each post starts after the previous one settles, so
-  // batches arrive in order and close() can wait for posts still in flight.
-  // It never rejects: a failed post is reported and its batch is dropped.
-  let inFlight: Promise<void> = Promise.resolve()
+  // The post in flight, if any. Outside close(), only one post runs at a time,
+  // so batches arrive in order.
+  let inFlight: Promise<void> | null = null
 
-  /**
-   * Takes the pending events and clears the timeout before posting, so a
-   * timeout or close during an in-flight post can't send the same events again
-   * or drop events added while it runs. Resolves once every post started so
-   * far has settled.
-   */
-  const sendBatch = async () => {
+  // Never rejects, so callers waiting on it can't fail because of an earlier
+  // post.
+  const post = async (events: any[]) => {
+    try {
+      await client.postLogEvents(events)
+    } catch (err) {
+      // postLogEvents reports network and API errors through onError and
+      // resolves. It rejects only if onError itself throws. Failed batches are
+      // not retried.
+      console.error(
+        `pino-logflare: dropped ${events.length} events after a failed send:`,
+        err,
+      )
+    }
+  }
+
+  const clearBatchTimeout = () => {
     if (timeoutId) {
       clearTimeout(timeoutId)
       timeoutId = null
     }
+  }
+
+  /**
+   * Clears the timeout, waits until no post is in flight, then posts the
+   * pending events. Taking the events before posting means a timeout during a
+   * post can't send them again or drop events added while it runs. Events added
+   * while waiting go out together in one post, so a slow endpoint doesn't build
+   * a queue of small posts. Resolves once the post it started has finished.
+   */
+  const sendBatch = async () => {
+    clearBatchTimeout()
+    while (inFlight) {
+      await inFlight
+    }
+    if (batch.length === 0) {
+      return
+    }
+    const events = batch
+    batch = []
+    const sending = post(events)
+    inFlight = sending
+    await sending
+    // This continuation runs before those of callers waiting on the same post,
+    // so this is still `sending`. The check guards against clearing a newer
+    // post if that ever changes.
+    if (inFlight === sending) {
+      inFlight = null
+    }
+  }
+
+  /**
+   * Posts the pending events right away, without waiting for the post in
+   * flight, then waits for both. At shutdown pino only waits a limited time,
+   * so the last events must not queue behind a slow post.
+   */
+  const close = async () => {
+    clearBatchTimeout()
+    const pending: Promise<void>[] = []
+    if (inFlight) {
+      pending.push(inFlight)
+    }
     if (batch.length > 0) {
       const events = batch
       batch = []
-      // postLogEvents reports network and API errors through onError and
-      // resolves. It rejects only if onError itself throws. Failed batches are
-      // not retried.
-      inFlight = inFlight
-        .then(() => client.postLogEvents(events))
-        .then(
-          () => {},
-          (err) => {
-            console.error(
-              `pino-logflare: dropped ${events.length} events after a failed send:`,
-              err,
-            )
-          },
-        )
+      pending.push(post(events))
     }
-    await inFlight
+    await Promise.all(pending)
   }
 
   const addEvent = async (event: any) => {
@@ -96,7 +133,7 @@ const createBatchInstance = (
   return {
     sendBatch,
     addEvent,
-    close: sendBatch,
+    close,
   }
 }
 

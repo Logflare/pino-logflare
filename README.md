@@ -172,14 +172,14 @@ const send = createPinoBrowserSend({
 | `apiBaseUrl`       | Optional, `string`  | Custom API endpoint (defaults to Logflare's API)                                                                                                                                                                           |
 | `size`             | Optional, `number`  | Number of logs to batch before sending (defaults to 1)                                                                                                                                                                     |
 | `onPreparePayload` | Optional, `Object`  | Object with a `module` and `method` to be invoked on the worker thread. The method should transform events prior to sending. <br />Receives the events as the first arg and the payload metadata as the second arg         |
-| `onError`          | Optional, `Object`  | Object with a `module` and `method` to be invoked on the worker thread. This method is invoked on errors when sending events to the given API. <br />Receives the events as the first arg and the error as the second arg. |
+| `onError`          | Optional, `Object`  | Object with a `module` and `method` to be invoked on the worker thread. This method is invoked on errors when sending events to the given API. <br />Receives `{ batch }` as the first arg and the error as the second arg |
 | `batchSize`        | Optional, `number`  | Number of logs to batch before sending (defaults to 100)                                                                                                                                                                   |
 | `batchTimeout`     | Optional, `number`  | Time in milliseconds to wait before sending partial batch (defaults to 1000)                                                                                                                                               |
 | `debug`            | Optional, `boolean` | Turns on debug console logs on the base HTTP client.                                                                                                                                                                       |
 
 **Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
 
-**Note:** A batch that fails to send is not retried and is dropped. If `onError` is set, it receives the batch and the error.
+**Note:** A batch that fails to send is not retried and is dropped. If `onError` is set, it is called with the request payload (`{ batch }`) and the error.
 
 **Note:** `onPreparePayload` and `onError` options only accept callbacks for up to Pino v6 with legacy API. This is deprecated, please migrate to dynamic import based callbacks.
 

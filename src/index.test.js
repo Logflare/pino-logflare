@@ -253,7 +253,7 @@ describe("batch instance while a send is in flight", () => {
     return { fullBatchSend }
   }
 
-  it("does not send a batch again when the timeout fires during its send", async () => {
+  it("does not send a full batch again when its timeout comes due during the send", async () => {
     const { fullBatchSend } = await startFullBatchSend()
 
     jest.advanceTimersByTime(100)
@@ -296,6 +296,53 @@ describe("batch instance while a send is in flight", () => {
     expect(posted).toEqual([["test1", "test2"]])
   })
 
+  it("sends pending events on close without waiting for the post in flight", async () => {
+    batchInstance.addEvent({ msg: "test1" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+    batchInstance.addEvent({ msg: "test2" })
+
+    let closed = false
+    const closing = batchInstance.close().then(() => {
+      closed = true
+    })
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"], ["test2"]])
+
+    resolvers[1]()
+    await flushMicrotasks()
+    expect(closed).toBe(false)
+
+    resolvers[0]()
+    await closing
+
+    expect(posted).toEqual([["test1"], ["test2"]])
+  })
+
+  it("finishes a send only once no post is in flight", async () => {
+    batchInstance.addEvent({ msg: "test1" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+    batchInstance.addEvent({ msg: "test2" })
+
+    // Both wait for the first post; the first to resume sends test2.
+    const first = batchInstance.sendBatch()
+    let secondDone = false
+    const second = batchInstance.sendBatch().then(() => {
+      secondDone = true
+    })
+    resolvers[0]()
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"], ["test2"]])
+    expect(secondDone).toBe(false)
+
+    resolvers[1]()
+    await first
+    await second
+  })
+
   it("starts a send only after the previous one finishes", async () => {
     batchInstance.addEvent({ msg: "test1" })
     jest.advanceTimersByTime(100)
@@ -312,6 +359,50 @@ describe("batch instance while a send is in flight", () => {
 
     resolvers[1]()
     await fullBatchSend
+  })
+
+  it("sends events added during a slow send together in the next post", async () => {
+    batchInstance.addEvent({ msg: "test1" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+
+    // Each event's timeout fires while the first post is still in flight.
+    batchInstance.addEvent({ msg: "test2" })
+    jest.advanceTimersByTime(100)
+    batchInstance.addEvent({ msg: "test3" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"]])
+
+    resolvers[0]()
+    await flushMicrotasks()
+
+    expect(posted).toEqual([["test1"], ["test2", "test3"]])
+
+    resolvers[1]()
+    await batchInstance.close()
+
+    expect(posted).toEqual([["test1"], ["test2", "test3"]])
+  })
+
+  it("keeps sending when the client throws synchronously", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {})
+    const throwingClient = {
+      postLogEvents: jest.fn(() => {
+        throw new Error("sync throw")
+      }),
+    }
+    const instance = createBatchInstance(
+      { batchSize: 1, batchTimeout: 100 },
+      throwingClient,
+    )
+
+    await instance.addEvent({ msg: "test1" })
+    await instance.addEvent({ msg: "test2" })
+    await instance.close()
+
+    expect(throwingClient.postLogEvents).toHaveBeenCalledTimes(2)
   })
 
   it("does not fail close() after an earlier send failed", async () => {
