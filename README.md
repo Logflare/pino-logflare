@@ -179,6 +179,8 @@ const send = createPinoBrowserSend({
 
 **Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
 
+**Note:** A batch that fails to send is not retried and is dropped. If `onError` is set, it receives the batch and the error.
+
 **Note:** `onPreparePayload` and `onError` options only accept callbacks for up to Pino v6 with legacy API. This is deprecated, please migrate to dynamic import based callbacks.
 
 ### ⚠️ Deprecated Options

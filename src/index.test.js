@@ -209,6 +209,7 @@ describe("batch instance", () => {
 describe("batch instance while a send is in flight", () => {
   let posted
   let resolvers
+  let rejecters
   let batchInstance
 
   // Lets the code after a resolved `await` run before the test continues.
@@ -220,11 +221,15 @@ describe("batch instance while a send is in flight", () => {
     jest.useFakeTimers()
     posted = []
     resolvers = []
-    // Each post stays in flight until the test resolves it.
+    rejecters = []
+    // Each post stays in flight until the test resolves or rejects it.
     const mockClient = {
       postLogEvents: jest.fn((batch) => {
         posted.push(batch.map((event) => event.message))
-        return new Promise((resolve) => resolvers.push(resolve))
+        return new Promise((resolve, reject) => {
+          resolvers.push(resolve)
+          rejecters.push(reject)
+        })
       }),
     }
     batchInstance = createBatchInstance(
@@ -235,6 +240,7 @@ describe("batch instance while a send is in flight", () => {
 
   afterEach(() => {
     jest.useRealTimers()
+    jest.restoreAllMocks()
   })
 
   // The first event arms the batch timeout; the second fills the batch and
@@ -306,5 +312,39 @@ describe("batch instance while a send is in flight", () => {
 
     resolvers[1]()
     await fullBatchSend
+  })
+
+  it("does not fail close() after an earlier send failed", async () => {
+    const consoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {})
+    batchInstance.addEvent({ msg: "test1" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+
+    rejecters[0](new Error("onError threw"))
+    await flushMicrotasks()
+
+    // Nothing is pending, so close() must not rethrow the earlier failure.
+    await batchInstance.close()
+
+    expect(consoleError).toHaveBeenCalledTimes(1)
+    expect(posted).toEqual([["test1"]])
+  })
+
+  it("keeps sending after a failed send", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {})
+    const { fullBatchSend } = await startFullBatchSend()
+
+    rejecters[0](new Error("onError threw"))
+    await fullBatchSend
+
+    batchInstance.addEvent({ msg: "test3" })
+    jest.advanceTimersByTime(100)
+    await flushMicrotasks()
+    resolvers[1]()
+    await batchInstance.close()
+
+    expect(posted).toEqual([["test1", "test2"], ["test3"]])
   })
 })

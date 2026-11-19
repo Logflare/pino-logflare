@@ -47,7 +47,8 @@ const createBatchInstance = (
   let timeoutId: NodeJS.Timeout | null = null
   // The most recent post. Each post starts after the previous one settles, so
   // batches arrive in order and close() can wait for posts still in flight.
-  let inFlight: Promise<unknown> = Promise.resolve()
+  // It never rejects: a failed post is reported and its batch is dropped.
+  let inFlight: Promise<void> = Promise.resolve()
 
   /**
    * Takes the pending events and clears the timeout before posting, so a
@@ -63,10 +64,20 @@ const createBatchInstance = (
     if (batch.length > 0) {
       const events = batch
       batch = []
-      // A failed earlier post must not stop this one from being sent.
+      // postLogEvents reports network and API errors through onError and
+      // resolves. It rejects only if onError itself throws. Failed batches are
+      // not retried.
       inFlight = inFlight
-        .catch(() => {})
         .then(() => client.postLogEvents(events))
+        .then(
+          () => {},
+          (err) => {
+            console.error(
+              `pino-logflare: dropped ${events.length} events after a failed send:`,
+              err,
+            )
+          },
+        )
     }
     await inFlight
   }
