@@ -12,6 +12,7 @@ import { HttpClient, HttpClientOptions } from "logflare-transport-core"
 interface LogflareTransportOptions extends HttpClientOptions {
   batchSize?: number
   batchTimeout?: number // timeout in ms before sending batch
+  requestTimeout?: number // timeout in ms for each request to Logflare
   onError?: any
   onPreparePayload?: any
 }
@@ -140,8 +141,17 @@ const createBatchInstance = (
   }
 }
 
+// Posts go out one at a time, so a stalled request holds back every later
+// batch, and pino waits at most 10 s for the transport at shutdown. Unless
+// requestTimeout is set (0 for no timeout), a request gives up after 5 s and
+// its batch is dropped (and passed to onError, if set).
+const DEFAULT_REQUEST_TIMEOUT = 5000
+
 export default async function (options: LogflareTransportOptions) {
-  let clientOptions: LogflareTransportOptions = options
+  let clientOptions: LogflareTransportOptions = {
+    ...options,
+    requestTimeout: options.requestTimeout ?? DEFAULT_REQUEST_TIMEOUT,
+  }
   for (const cbName of ["onError", "onPreparePayload"]) {
     const callbackTarget = options[cbName as keyof LogflareTransportOptions]
     if (callbackTarget) {
