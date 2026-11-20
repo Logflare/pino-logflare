@@ -180,7 +180,7 @@ const send = createPinoBrowserSend({
 
 **Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
 
-**Note:** A batch that fails to send is not retried and is dropped. If `onError` is set, it is called with the request payload (`{ batch }`) and the error. A request that takes longer than `requestTimeout` fails with a `TimeoutError`.
+**Note:** A batch that fails to send is not retried and is dropped. If `onError` is set, it is called with the request payload (`{ batch }`) and the error. A request that takes longer than `requestTimeout` fails with a `TimeoutError`. Logflare may still have stored that batch, so retrying it from `onError` can create duplicates.
 
 **Note:** `onPreparePayload` and `onError` options only accept callbacks for up to Pino v6 with legacy API. This is deprecated, please migrate to dynamic import based callbacks.
 
