@@ -175,7 +175,7 @@ const send = createPinoBrowserSend({
 | `onError`          | Optional, `Object`  | Object with a `module` and `method` to be invoked on the worker thread. This method is invoked on errors when sending events to the given API. <br />Receives the `{ batch }` payload first, then the error as the second. |
 | `batchSize`        | Optional, `number`  | Number of logs to batch before sending (defaults to 100)                                                                                                                                                                   |
 | `batchTimeout`     | Optional, `number`  | Time in milliseconds to wait before sending partial batch (defaults to 1000)                                                                                                                                               |
-| `requestTimeout`   | Optional, `number`  | Time in milliseconds to wait for each request to Logflare before dropping the batch (defaults to 5000 for Pino +v7, 0 for no timeout)                                                                                      |
+| `requestTimeout`   | Optional, `number`  | Time in milliseconds to wait for each request to Logflare before dropping the batch. Defaults to 5000 for the Pino v7+ transport and to no timeout elsewhere; set 0 to disable.                                            |
 | `debug`            | Optional, `boolean` | Turns on debug console logs on the base HTTP client.                                                                                                                                                                       |
 
 **Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
