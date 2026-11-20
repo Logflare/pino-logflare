@@ -175,11 +175,12 @@ const send = createPinoBrowserSend({
 | `onError`          | Optional, `Object`  | Object with a `module` and `method` to be invoked on the worker thread. This method is invoked on errors when sending events to the given API. <br />Receives the `{ batch }` payload first, then the error as the second. |
 | `batchSize`        | Optional, `number`  | Number of logs to batch before sending (defaults to 100)                                                                                                                                                                   |
 | `batchTimeout`     | Optional, `number`  | Time in milliseconds to wait before sending partial batch (defaults to 1000)                                                                                                                                               |
+| `requestTimeout`   | Optional, `number`  | Time in milliseconds to wait for each request to Logflare before dropping the batch. Defaults to 5000 for the Pino v7+ transport and to no timeout elsewhere; set 0 to disable.                                            |
 | `debug`            | Optional, `boolean` | Turns on debug console logs on the base HTTP client.                                                                                                                                                                       |
 
 **Note:** `batchSize` and `batchTimeout` options are available only for Pino +v7.
 
-**Note:** A batch that fails to send is not retried and is dropped. If `onError` is set, it is called with the request payload (`{ batch }`) and the error.
+**Note:** A batch that fails to send is not retried and is dropped. If `onError` is set, it is called with the request payload (`{ batch }`) and the error. A request that takes longer than `requestTimeout` fails with a `TimeoutError`. Logflare may still have stored that batch, so retrying it from `onError` can create duplicates.
 
 **Note:** `onPreparePayload` and `onError` options only accept callbacks for up to Pino v6 with legacy API. This is deprecated, please migrate to dynamic import based callbacks.
 
